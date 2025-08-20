@@ -1,0 +1,13 @@
+/mnt/c/Users/Chee Meng/Desktop/3d-wrapping/CMakeFiles/building_mesh_wrap.dir
+/mnt/c/Users/Chee Meng/Desktop/3d-wrapping/CMakeFiles/ALL_CGAL_TARGETS.dir
+/mnt/c/Users/Chee Meng/Desktop/3d-wrapping/CMakeFiles/cgal_check_build_system.dir
+/mnt/c/Users/Chee Meng/Desktop/3d-wrapping/CMakeFiles/mixed_inputs_wrap.dir
+/mnt/c/Users/Chee Meng/Desktop/3d-wrapping/CMakeFiles/pause_and_resume_wrapping.dir
+/mnt/c/Users/Chee Meng/Desktop/3d-wrapping/CMakeFiles/point_set_wrap.dir
+/mnt/c/Users/Chee Meng/Desktop/3d-wrapping/CMakeFiles/successive_wraps.dir
+/mnt/c/Users/Chee Meng/Desktop/3d-wrapping/CMakeFiles/triangle_mesh_wrap.dir
+/mnt/c/Users/Chee Meng/Desktop/3d-wrapping/CMakeFiles/triangle_soup_wrap.dir
+/mnt/c/Users/Chee Meng/Desktop/3d-wrapping/CMakeFiles/volumetric_wrap.dir
+/mnt/c/Users/Chee Meng/Desktop/3d-wrapping/CMakeFiles/wrap_from_cavity.dir
+/mnt/c/Users/Chee Meng/Desktop/3d-wrapping/CMakeFiles/edit_cache.dir
+/mnt/c/Users/Chee Meng/Desktop/3d-wrapping/CMakeFiles/rebuild_cache.dir

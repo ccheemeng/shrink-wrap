@@ -1,0 +1,1 @@
+/usr/bin/c++ -O3 -DNDEBUG CMakeFiles/successive_wraps.dir/successive_wraps.cpp.o -o successive_wraps  -Wl,-rpath,/home/ccheemeng/miniconda3/envs/3d-wrapping/lib /home/ccheemeng/miniconda3/envs/3d-wrapping/lib/libgmpxx.so /home/ccheemeng/miniconda3/envs/3d-wrapping/lib/libmpfr.so /home/ccheemeng/miniconda3/envs/3d-wrapping/lib/libgmp.so -pthread

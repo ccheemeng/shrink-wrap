@@ -37,8 +37,6 @@ endif()
 # ##########################################################
 
 
-create_single_source_cgal_program( "building_mesh_wrap.cpp" )
-
 create_single_source_cgal_program( "mixed_inputs_wrap.cpp" )
 
 create_single_source_cgal_program( "pause_and_resume_wrapping.cpp" )
