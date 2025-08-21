@@ -36,23 +36,4 @@ endif()
 # Creating entries for all C++ files with "main" routine
 # ##########################################################
 
-
-create_single_source_cgal_program( "building_mesh_wrap.cpp" )
-
-create_single_source_cgal_program( "mixed_inputs_wrap.cpp" )
-
-create_single_source_cgal_program( "pause_and_resume_wrapping.cpp" )
-
-create_single_source_cgal_program( "point_set_wrap.cpp" )
-
-create_single_source_cgal_program( "successive_wraps.cpp" )
-
-create_single_source_cgal_program( "triangle_mesh_wrap.cpp" )
-
-create_single_source_cgal_program( "triangle_soup_wrap.cpp" )
-
-create_single_source_cgal_program( "volumetric_wrap.cpp" )
-
-create_single_source_cgal_program( "wrap_from_cavity.cpp" )
-
-
+create_single_source_cgal_program( "shrink_wrap.cpp" )

@@ -1,1 +1,0 @@
-/usr/bin/c++ -O3 -DNDEBUG CMakeFiles/volumetric_wrap.dir/volumetric_wrap.cpp.o -o volumetric_wrap  -Wl,-rpath,/home/ccheemeng/miniconda3/envs/3d-wrapping/lib /home/ccheemeng/miniconda3/envs/3d-wrapping/lib/libgmpxx.so /home/ccheemeng/miniconda3/envs/3d-wrapping/lib/libmpfr.so /home/ccheemeng/miniconda3/envs/3d-wrapping/lib/libgmp.so -pthread
