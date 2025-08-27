@@ -1,5 +1,12 @@
-*.mesh
 *.bak
+*.cmake
+*.mesh
+*.obj
+*.off
+.vscode
+CMakeCache.txt
+CMakeFiles
+Makefile
 
 # Prerequisites
 *.d
@@ -8,7 +15,6 @@
 *.slo
 *.lo
 *.o
-*.obj
 
 # Precompiled Headers
 *.gch

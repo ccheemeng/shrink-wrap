@@ -36,4 +36,9 @@ endif()
 # Creating entries for all C++ files with "main" routine
 # ##########################################################
 
-create_single_source_cgal_program( "shrink_wrap.cpp" )
+
+create_single_source_cgal_program( "shrink_wrap_absolute.cpp" )
+
+create_single_source_cgal_program( "shrink_wrap_relative.cpp" )
+
+
