@@ -1,0 +1,1 @@
+ "C:/Program Files/CGAL-6.0.1/auxiliary/gmp/lib/mpfr.lib" "C:/Program Files/CGAL-6.0.1/auxiliary/gmp/lib/gmp.lib" -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 

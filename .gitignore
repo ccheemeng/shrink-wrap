@@ -1,12 +1,6 @@
-*.bak
-*.cmake
-*.mesh
 *.obj
 *.off
 .vscode
-CMakeCache.txt
-CMakeFiles
-Makefile
 
 # Prerequisites
 *.d

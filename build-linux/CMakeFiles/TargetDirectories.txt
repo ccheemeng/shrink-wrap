@@ -1,0 +1,6 @@
+/mnt/c/Users/Chee Meng/Desktop/3d-wrapping/build-linux/CMakeFiles/shrink_wrap_absolute.dir
+/mnt/c/Users/Chee Meng/Desktop/3d-wrapping/build-linux/CMakeFiles/ALL_CGAL_TARGETS.dir
+/mnt/c/Users/Chee Meng/Desktop/3d-wrapping/build-linux/CMakeFiles/cgal_check_build_system.dir
+/mnt/c/Users/Chee Meng/Desktop/3d-wrapping/build-linux/CMakeFiles/shrink_wrap_relative.dir
+/mnt/c/Users/Chee Meng/Desktop/3d-wrapping/build-linux/CMakeFiles/edit_cache.dir
+/mnt/c/Users/Chee Meng/Desktop/3d-wrapping/build-linux/CMakeFiles/rebuild_cache.dir

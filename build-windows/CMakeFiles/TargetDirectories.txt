@@ -1,0 +1,6 @@
+C:/Users/Chee Meng/Desktop/3d-wrapping/build-windows/CMakeFiles/shrink_wrap_absolute.dir
+C:/Users/Chee Meng/Desktop/3d-wrapping/build-windows/CMakeFiles/ALL_CGAL_TARGETS.dir
+C:/Users/Chee Meng/Desktop/3d-wrapping/build-windows/CMakeFiles/cgal_check_build_system.dir
+C:/Users/Chee Meng/Desktop/3d-wrapping/build-windows/CMakeFiles/shrink_wrap_relative.dir
+C:/Users/Chee Meng/Desktop/3d-wrapping/build-windows/CMakeFiles/edit_cache.dir
+C:/Users/Chee Meng/Desktop/3d-wrapping/build-windows/CMakeFiles/rebuild_cache.dir
