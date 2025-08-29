@@ -1,44 +1,11 @@
-# Created by the script cgal_create_CMakeLists
-# This is the CMake script for compiling a set of CGAL applications.
+# Created by the script cgal_create_cmake_script
+# This is the CMake script for compiling a CGAL application.
 
 cmake_minimum_required(VERSION 3.12...3.29)
+project(ShrinkWrap)
 
-project( Chee )
+find_package(CGAL REQUIRED)
 
-
-# CGAL and its components
-find_package( CGAL QUIET COMPONENTS  )
-
-if ( NOT CGAL_FOUND )
-
-  message(STATUS "This project requires the CGAL library, and will not be compiled.")
-  return()
-
-endif()
-
-
-# Boost and its components
-find_package( Boost REQUIRED )
-
-if ( NOT Boost_FOUND )
-
-  message(STATUS "This project requires the Boost library, and will not be compiled.")
-
-  return()
-
-endif()
-
-# include for local directory
-
-# include for local package
-
-
-# Creating entries for all C++ files with "main" routine
-# ##########################################################
-
-
-create_single_source_cgal_program( "shrink_wrap_absolute.cpp" )
-
-create_single_source_cgal_program( "shrink_wrap_relative.cpp" )
-
-
+# create a target per cppfile
+create_single_source_cgal_program("shrink_wrap_absolute.cpp")
+create_single_source_cgal_program("shrink_wrap_relative.cpp")
