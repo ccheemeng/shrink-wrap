@@ -1,11 +1,13 @@
-# Created by the script cgal_create_cmake_script
-# This is the CMake script for compiling a CGAL application.
-
 cmake_minimum_required(VERSION 3.12...3.29)
 project(ShrinkWrap)
 
 find_package(CGAL REQUIRED)
+find_package(Eigen3 3.4 REQUIRED NO_MODULE)
 
-# create a target per cppfile
-create_single_source_cgal_program("shrink_wrap_absolute.cpp")
-create_single_source_cgal_program("shrink_wrap_relative.cpp")
+# add_executable(edge_collapse_garland_heckbert edge_collapse_garland_heckbert.cpp)
+# target_link_libraries(edge_collapse_garland_heckbert CGAL::CGAL)
+# target_link_libraries(edge_collapse_garland_heckbert Eigen3::Eigen)
+
+add_executable(shrink_wrap shrink_wrap.cpp)
+target_link_libraries(shrink_wrap CGAL::CGAL)
+target_link_libraries(shrink_wrap Eigen3::Eigen)

@@ -1,3 +1,0 @@
-"C:\Program Files\CMake\bin\cmake.exe" -E rm -f CMakeFiles\shrink_wrap_absolute.dir/objects.a
-C:\msys64\ucrt64\bin\ar.exe qc CMakeFiles\shrink_wrap_absolute.dir/objects.a @CMakeFiles\shrink_wrap_absolute.dir\objects1.rsp
-C:\msys64\ucrt64\bin\c++.exe -O3 -DNDEBUG -Wl,--whole-archive CMakeFiles\shrink_wrap_absolute.dir/objects.a -Wl,--no-whole-archive -o shrink_wrap_absolute.exe -Wl,--out-implib,libshrink_wrap_absolute.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\shrink_wrap_absolute.dir\linkLibs.rsp

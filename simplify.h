@@ -12,6 +12,7 @@
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 
 namespace simplify {
+
 namespace SMS = CGAL::Surface_mesh_simplification;
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Surface_mesh =
@@ -31,30 +32,38 @@ int collapse_gh(Surface_mesh& mesh, const double ratio) {
 
     using GH_cost = typename GHPolicies::Get_cost;
     using GH_placement = typename GHPolicies::Get_placement;
-    using Bounded_GH_placement = SMS::Bounded_normal_change_placement;
+    using Bounded_GH_placement = SMS::Bounded_normal_change_placement<GH_placement>;
 
     GHPolicies gh_policies(mesh);
     const GH_cost& gh_cost = gh_policies.get_cost();
     const GH_placement& gh_placement = gh_policies.get_placement();
     Bounded_GH_placement placement(gh_placement);
 
-    int removed = SMS::edge_collapse(mesh, stop,
-        CGAL::parameters::get_cost(gh_cost).get_placement(placement));
+    int removed = SMS::edge_collapse(
+        mesh,
+        stop,
+        CGAL::parameters::get_cost(gh_cost).get_placement(placement)
+    );
 
     return removed;
 }
 
-void simplify(Surface_mesh& mesh, const double ratio,
-    const std::string& policy) {
+int simplify(
+    Surface_mesh& mesh,
+    const double ratio,
+    const std::string& policy
+) {
+    int removed;
     if (policy == "ct") {
-        collapse_gh<Classic_tri>(mesh, ratio);
+        removed = collapse_gh<Classic_tri>(mesh, ratio);
     } else if (policy == "pp") {
-        collapse_gh<Prob_plane>(mesh, ratio);
+        removed = collapse_gh<Prob_plane>(mesh, ratio);
     } else if (policy == "pt"){
-        collapse_gh<Prob_tri>(mesh, ratio);
+        removed = collapse_gh<Prob_tri>(mesh, ratio);
     } else {
-        collapse_gh<Classic_plane>(mesh, ratio);
+        removed = collapse_gh<Classic_plane>(mesh, ratio);
     }
+    return removed;
 }
 }
 

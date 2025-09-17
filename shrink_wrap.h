@@ -9,6 +9,7 @@
 #include <CGAL/Surface_mesh.h>
 
 namespace shrink_wrap{
+    
 using Point_3 = CGAL::Exact_predicates_inexact_constructions_kernel::Point_3;
 using Surface_mesh = CGAL::Surface_mesh<Point_3>;
 
