@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/shrink_wrap.dir/shrink_wrap.cpp.o -o shrink_wrap  -Wl,-rpath,/home/ccheemeng/miniconda3/envs/3d-wrapping/lib /home/ccheemeng/miniconda3/envs/3d-wrapping/lib/libgmpxx.so /home/ccheemeng/miniconda3/envs/3d-wrapping/lib/libmpfr.so /home/ccheemeng/miniconda3/envs/3d-wrapping/lib/libgmp.so -pthread
