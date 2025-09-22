@@ -1,4 +1,4 @@
-name: 3d-wrapping
+name: shrink-wrap
 channels:
   - conda-forge
   - defaults
@@ -128,4 +128,3 @@ dependencies:
   - xorg-libxxf86vm=1.1.6=h9b100fa_0
   - xorg-xorgproto=2024.1=h5eee18b_1
   - zstd=1.5.7=hb8e6e7a_2
-prefix: /home/ccheemeng/miniconda3/envs/3d-wrapping
