@@ -1,4 +1,4 @@
-name: 3d-wrapping
+name: shrink-wrap
 channels:
   - ifcopenshell
   - conda-forge

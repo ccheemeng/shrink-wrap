@@ -1,3 +1,0 @@
-/mnt/c/Users/Chee Meng/Desktop/3d-wrapping/build/CMakeFiles/shrink_wrap.dir
-/mnt/c/Users/Chee Meng/Desktop/3d-wrapping/build/CMakeFiles/edit_cache.dir
-/mnt/c/Users/Chee Meng/Desktop/3d-wrapping/build/CMakeFiles/rebuild_cache.dir

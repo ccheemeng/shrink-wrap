@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/edge_collapse_garland_heckbert.dir/edge_collapse_garland_heckbert.cpp.o -o edge_collapse_garland_heckbert  -Wl,-rpath,/home/ccheemeng/miniconda3/envs/3d-wrapping/lib /home/ccheemeng/miniconda3/envs/3d-wrapping/lib/libgmpxx.so /home/ccheemeng/miniconda3/envs/3d-wrapping/lib/libmpfr.so /home/ccheemeng/miniconda3/envs/3d-wrapping/lib/libgmp.so -pthread
