@@ -38,53 +38,93 @@ std::string generate_output_name(
 }
 
 int main(int argc, char** argv) {
-    const std::string filename = argv[1];
-    const double alpha = std::stod(argv[2]);
-    const double offset = std::stod(argv[3]);
+    const double alpha = std::stod(argv[1]);
+    const double offset = std::stod(argv[2]);
+    std::vector<std::string> filenames;
     bool relative = false;
     double ratio = -1.0;
     std::string policy = "";
+    std::string out = "out";
 
     static struct option long_options[] = {
+        {"input", required_argument, 0, 'i'},
         {"relative", no_argument, 0, 0},
         {"ratio", required_argument, 0, 'r'},
         {"policy", required_argument, 0, 'p'},
+        {"out", required_argument, 0, 'o'},
         {0, 0, 0, 0}
     };
-    optind = 4;
+    optind = 3;
     int option_index = 0;
     for (int i = 0; i < 1000; ++i) {
-        int opt = getopt_long(argc, argv, "r:p:", long_options, &option_index);
+        int opt = getopt_long(argc, argv, "i:r:p:o:", long_options, &option_index);
         if (opt == -1) {
             break;
         }
         switch (opt) {
-            case 0:
+            case 0: {
                 if (long_options[option_index].name == "relative") {
                     relative = true;
                 }
                 break;
-            case 'r':
+            }
+            case 'i': {
+                filenames.push_back(optarg);
+                break;
+            }
+            case 'r': {
                 ratio = std::stod(optarg);
                 break;
-            case 'p':
+            }
+            case 'p': {
                 policy = optarg;
                 break;
-            default:
+            }
+            case 'o': {
+                out = optarg;
+                break;
+            }
+            default: {
                 std::cerr
-                << "?? getopt returned character code " << opt << " ??"
-                << std::endl;
+                    << "?? getopt returned character code " << opt << " ??"
+                    << std::endl;
+            }
         }
     }
-
-    std::cout << "Reading " << filename << "..." << std::endl;
+    
     std::vector<Point_3> points;
     std::vector<std::vector<std::size_t>> faces;
-    if (
-        !CGAL::IO::read_polygon_soup(filename, points, faces)
-        || faces.empty()
-    ) {
-        std::cerr << "Invalid input: " << filename << std::endl;
+    for (std::string filename: filenames) {
+        std::vector<Point_3> file_points;
+        std::vector<std::vector<std::size_t>> file_faces;
+        std::cout << "Reading " << filename << "..." << std::endl;
+        if (
+            !CGAL::IO::read_polygon_soup(filename, file_points, file_faces)
+            || file_faces.empty()
+        ) {
+            std::cout << "Invalid input: " << filename << std::endl;
+            continue;
+        }
+        points.insert(
+            points.end(),
+            std::make_move_iterator(file_points.begin()),
+            std::make_move_iterator(file_faces.end())
+        );
+        faces.insert(
+            faces.end(),
+            std::make_move_iterator(file_faces.begin()),
+            std::make_move_iterator(file_faces.end())
+        );
+        std::cout << filename << ": "
+            << file_points.size() << " points, "
+            << file_faces.size() << " faces"
+            << std::endl;
+    }
+
+    if (points.empty() && faces.empty()) {
+        std::cerr
+            << "?? Could not read points or faces from input files ??"
+            << std::endl;
         return EXIT_FAILURE;
     }
     std::cout << "Input: "
@@ -123,7 +163,7 @@ int main(int argc, char** argv) {
     }
     
     const std::string output_name =
-        generate_output_name(filename, alpha, offset, relative, ratio, policy);
+        generate_output_name(out, alpha, offset, relative, ratio, policy);
     std::cout << "Writing to " << output_name << std::endl;
     CGAL::IO::write_polygon_mesh(
         output_name, wrap, CGAL::parameters::stream_precision(17));

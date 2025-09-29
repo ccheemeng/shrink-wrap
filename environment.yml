@@ -2,8 +2,6 @@ name: shrink-wrap
 channels:
   - conda-forge
   - defaults
-  - https://repo.anaconda.com/pkgs/main
-  - https://repo.anaconda.com/pkgs/r
 dependencies:
   - _libgcc_mutex=0.1=main
   - _openmp_mutex=5.1=1_gnu
@@ -30,10 +28,12 @@ dependencies:
   - fonts-anaconda=1=h8fa9717_0
   - fonts-conda-ecosystem=1=hd3eb1b0_0
   - freetype=2.14.1=ha770c72_0
-  - gcc=15.1.0=hd165ed4_4
+  - gcc=15.1.0=hd165ed4_5
   - gcc_impl_linux-64=15.1.0=h4393ad2_4
   - gmp=6.3.0=hac33072_2
   - graphite2=1.3.14=h295c915_1
+  - gxx=15.1.0=h33e79ad_5
+  - gxx_impl_linux-64=15.1.0=h6a1bac1_4
   - harfbuzz=11.5.0=h15599e2_0
   - icu=75.1=he02047a_0
   - kernel-headers_linux-64=3.10.0=h57e8cba_10
@@ -81,6 +81,7 @@ dependencies:
   - libsqlite=3.50.4=h0c1763c_0
   - libssh2=1.11.1=hcf80075_0
   - libstdcxx=15.1.0=h8f9b012_4
+  - libstdcxx-devel_linux-64=15.1.0=h4c094af_104
   - libstdcxx-ng=15.1.0=h4852527_4
   - libtiff=4.7.0=h8261f1e_6
   - libuuid=2.38.1=h0b41bf4_0
@@ -103,6 +104,7 @@ dependencies:
   - qt6-main=6.9.2=h994258b_2
   - rhash=1.4.6=hb9d3cd8_1
   - sysroot_linux-64=2.17=h57e8cba_10
+  - tzdata=2025b=h04d1e81_0
   - wayland=1.24.0=hdac8c69_0
   - xcb-util=0.4.1=h5eee18b_2
   - xcb-util-cursor=0.1.5=h5eee18b_0
