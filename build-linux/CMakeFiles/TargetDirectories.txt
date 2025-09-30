@@ -1,3 +1,0 @@
-/mnt/c/Users/SEED1123/Desktop/shrink-wrap/build-linux/CMakeFiles/shrink_wrap.dir
-/mnt/c/Users/SEED1123/Desktop/shrink-wrap/build-linux/CMakeFiles/edit_cache.dir
-/mnt/c/Users/SEED1123/Desktop/shrink-wrap/build-linux/CMakeFiles/rebuild_cache.dir
