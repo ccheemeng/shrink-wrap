@@ -38,7 +38,7 @@ A shrink wrap in a file format corresponding to the input
 3. Run the program:  
 
     ```bash
-    ./shrink_wrap <alpha> <offset> -i <input1> -i <input2> ... # see Arguments below
+    ./build-linux/shrink_wrap <alpha> <offset> -i <input1> -i <input2> ... # see Arguments below
     ```
     
 ## Arguments  
