@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
     bool relative = false;
     double ratio = -1.0;
     std::string policy = "";
-    std::string out = "out";
+    std::string out = "";
 
     static struct option long_options[] = {
         {"input", required_argument, 0, 'i'},
@@ -91,10 +91,14 @@ int main(int argc, char** argv) {
             }
         }
     }
+    if (filenames.size() <= 0) {
+        std::cerr << "?? No input files ??" << std::endl;
+        return EXIT_FAILURE;
+    }
     
     std::vector<Point_3> points;
     std::vector<std::vector<std::size_t>> faces;
-    for (std::string filename: filenames) {
+    for (std::string filename : filenames) {
         std::vector<Point_3> file_points;
         std::vector<std::vector<std::size_t>> file_faces;
         std::cout << "Reading " << filename << "..." << std::endl;
@@ -105,15 +109,19 @@ int main(int argc, char** argv) {
             std::cout << "Invalid input: " << filename << std::endl;
             continue;
         }
+        std::size_t num_points = points.size();
+        for (const std::vector<std::size_t>& face : file_faces) {
+            std::vector<std::size_t> new_face;
+            new_face.reserve(face.size());
+            for (std::size_t i : face) {
+                new_face.push_back(i + num_points);
+            }
+            faces.push_back(new_face);
+        }
         points.insert(
             points.end(),
             std::make_move_iterator(file_points.begin()),
-            std::make_move_iterator(file_faces.end())
-        );
-        faces.insert(
-            faces.end(),
-            std::make_move_iterator(file_faces.begin()),
-            std::make_move_iterator(file_faces.end())
+            std::make_move_iterator(file_points.end())
         );
         std::cout << filename << ": "
             << file_points.size() << " points, "
@@ -123,7 +131,7 @@ int main(int argc, char** argv) {
 
     if (points.empty() && faces.empty()) {
         std::cerr
-            << "?? Could not read points or faces from input files ??"
+            << "?? Could not read any points or faces from input files ??"
             << std::endl;
         return EXIT_FAILURE;
     }
@@ -161,12 +169,20 @@ int main(int argc, char** argv) {
             << std::endl;
         std::cout << "Took: " << duration.count() << " s" << std::endl;
     }
-    
-    const std::string output_name =
-        generate_output_name(out, alpha, offset, relative, ratio, policy);
-    std::cout << "Writing to " << output_name << std::endl;
+
+    if (out.length() <= 0) {
+        out = generate_output_name(
+            filenames.front(),
+            alpha,
+            offset,
+            relative,
+            ratio,
+            policy
+        );
+    }
+    std::cout << "Writing to " << out << std::endl;
     CGAL::IO::write_polygon_mesh(
-        output_name, wrap, CGAL::parameters::stream_precision(17));
+        out, wrap, CGAL::parameters::stream_precision(17));
     
     return EXIT_SUCCESS;
 }
