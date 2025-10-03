@@ -4,10 +4,6 @@ project(ShrinkWrap)
 find_package(CGAL REQUIRED)
 find_package(Eigen3 3.4 REQUIRED NO_MODULE)
 
-# add_executable(edge_collapse_garland_heckbert edge_collapse_garland_heckbert.cpp)
-# target_link_libraries(edge_collapse_garland_heckbert CGAL::CGAL)
-# target_link_libraries(edge_collapse_garland_heckbert Eigen3::Eigen)
-
 add_executable(shrink_wrap shrink_wrap.cpp)
 target_link_libraries(shrink_wrap CGAL::CGAL)
 target_link_libraries(shrink_wrap Eigen3::Eigen)
