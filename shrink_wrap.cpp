@@ -7,50 +7,60 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/IO/polygon_soup_io.h>
+#include <CGAL/Polygon_mesh_processing/remesh_planar_patches.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/Surface_mesh.h>
 
 #include "shrink_wrap.h"
 #include "simplify.h"
 
-using Point_3 = CGAL::Exact_predicates_inexact_constructions_kernel::Point_3;
+using K = CGAL::Exact_predicates_inexact_constructions_kernel;
+using Point_3 = K::Point_3;
 using Surface_mesh = CGAL::Surface_mesh<Point_3>;
 
 std::string generate_output_name(const std::string input_name,
                                  const double alpha, const double offset,
-                                 const bool relative, const double ratio,
-                                 const std::string policy) {
+                                 const bool relative, const bool simp,
+                                 const double ratio, const std::string policy,
+                                 const bool remesh, const double max_angle) {
     std::filesystem::path path = std::filesystem::path(input_name);
     std::string stem = path.stem().string();
     std::string extension = path.extension().string();
-    std::string output_name = stem + "_" + std::to_string(alpha) + "_" +
-                              std::to_string(offset) +
-                              (relative ? "_relative" : "") + "_" +
-                              std::to_string(ratio) + policy + extension;
+    std::string output_name =
+        stem + "_" + std::to_string(alpha) + "_" + std::to_string(offset) +
+        (relative ? "_relative" : "") +
+        (simp ? "_simplify" + std::to_string(ratio) + policy : "") +
+        (remesh ? "_remesh" + std::to_string(max_angle) : "") + extension;
     return output_name;
 }
 
 int main(int argc, char **argv) {
+
+    // Input
     const double alpha = std::stod(argv[1]);
     const double offset = std::stod(argv[2]);
     std::vector<std::string> filenames;
     bool relative = false;
+    bool simp = false;
     double ratio = -1.0;
     std::string policy = "";
+    bool remesh = false;
+    double max_angle = 0.0;
     std::string out = "";
 
     static struct option long_options[] = {
         {"input", required_argument, 0, 'i'},
         {"relative", no_argument, 0, 0},
-        {"ratio", required_argument, 0, 'r'},
+        {"simplify", required_argument, 0, 's'},
         {"policy", required_argument, 0, 'p'},
+        {"remesh", optional_argument, 0, 'r'},
         {"out", required_argument, 0, 'o'},
         {0, 0, 0, 0}};
     optind = 3;
     int option_index = 0;
     for (int i = 0; i < 1000; ++i) {
         int opt =
-            getopt_long(argc, argv, "i:r:p:o:", long_options, &option_index);
+            getopt_long(argc, argv, "i:s:p:r::o:", long_options, &option_index);
         if (opt == -1) {
             break;
         }
@@ -65,12 +75,20 @@ int main(int argc, char **argv) {
             filenames.push_back(optarg);
             break;
         }
-        case 'r': {
+        case 's': {
             ratio = std::stod(optarg);
+            simp = ratio > 0.0 && ratio <= 1.0;
             break;
         }
         case 'p': {
             policy = optarg;
+            break;
+        }
+        case 'r': {
+            remesh = true;
+            if (optarg) {
+                max_angle = std::stod(optarg);
+            }
             break;
         }
         case 'o': {
@@ -123,6 +141,8 @@ int main(int argc, char **argv) {
     std::cout << "Input: " << points.size() << " points, " << faces.size()
               << " faces" << std::endl;
 
+    // ShrinkWrap
+    std::cout << "ShrinkWrapping..." << std::endl;
     std::chrono::steady_clock::time_point start =
         std::chrono::steady_clock::now();
     Surface_mesh wrap;
@@ -132,28 +152,53 @@ int main(int argc, char **argv) {
     std::chrono::duration<double> duration = end - start;
 
     std::cout << "ShrinkWrap: " << wrap.number_of_vertices() << " vertices, "
-              << wrap.number_of_edges() << "edges, " << wrap.number_of_faces()
+              << wrap.number_of_edges() << " edges, " << wrap.number_of_faces()
               << " faces" << std::endl;
     std::cout << "Took: " << duration.count() << " s" << std::endl;
 
-    const bool simp = ratio > 0.0 && ratio <= 1.0;
+    // Simplify
     if (simp) {
+        std::cout << "Simplifying by " << std::to_string(ratio) << "..."
+                  << std::endl;
+
         start = std::chrono::steady_clock::now();
         int removed = simplify::simplify(wrap, ratio, policy);
         end = std::chrono::steady_clock::now();
         duration = end - start;
 
-        std::cout << "ShrinkWrap: " << wrap.number_of_vertices()
-                  << " vertices, " << wrap.number_of_edges() << "edges, "
+        std::cout << "Simplify: " << wrap.number_of_vertices() << " vertices, "
+                  << wrap.number_of_edges() << " edges, "
                   << wrap.number_of_faces() << " faces" << std::endl;
         std::cout << "Took: " << duration.count() << " s" << std::endl;
     }
 
+    // Remesh
+    if (remesh) {
+        std::cout << "Remeshing planar patches within "
+                  << std::to_string(max_angle) << "..." << std::endl;
+
+        start = std::chrono::steady_clock::now();
+        Surface_mesh remeshed;
+        CGAL::Polygon_mesh_processing::remesh_planar_patches(
+            wrap, remeshed,
+            CGAL::parameters::cosine_of_maximum_angle(std::cos(max_angle)));
+        wrap = remeshed;
+        end = std::chrono::steady_clock::now();
+        duration = end - start;
+
+        std::cout << "Remesh: " << wrap.number_of_vertices() << " vertices, "
+                  << wrap.number_of_edges() << " edges, "
+                  << wrap.number_of_faces() << " faces" << std::endl;
+        std::cout << "Took: " << duration.count() << " s" << std::endl;
+    }
+
+    std::cout << (remesh ? std::to_string(max_angle) : "") << std::endl;
+    // Ouptut
     if (out.length() <= 0) {
         out = generate_output_name(filenames.front(), alpha, offset, relative,
-                                   ratio, policy);
+                                   simp, ratio, policy, remesh, max_angle);
     }
-    std::cout << "Writing to " << out << std::endl;
+    std::cout << "Writing to " << out << "..." << std::endl;
     CGAL::IO::write_polygon_mesh(out, wrap,
                                  CGAL::parameters::stream_precision(17));
 
