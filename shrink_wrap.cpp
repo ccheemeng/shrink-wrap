@@ -187,11 +187,11 @@ int main(int argc, char **argv) {
     }
 
     // Ouptut
-    std::cout << "Writing to " << out << "..." << std::endl;
     if (out.length() <= 0) {
         out = generate_output_name(filenames.front(), alpha, offset, relative,
                                    simp, ratio, policy, remesh, max_angle);
     }
+    std::cout << "Writing to " << out << "..." << std::endl;
     CGAL::IO::write_polygon_mesh(out, wrap,
                                  CGAL::parameters::stream_precision(17));
 
