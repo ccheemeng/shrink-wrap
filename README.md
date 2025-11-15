@@ -4,6 +4,18 @@ This utility generates a watertight and orientable mesh over input 3D geometries
 via the [CGAL library](https://doc.cgal.org/latest/Alpha_wrap_3/index.html). 
 This mesh is termed a "shrink wrap".  
 
+A shrink wrap of one storey of an apartment building:  
+
+| Input | Output |
+| - | - |
+| ![Tembusu L12](./img/Tembusu%20L12.png) | ![Tembusu L12 wrap](./img/Tembusu%20L12%20wrap.png) |
+
+A shrink wrap from multiple inputs:  
+
+| Input 1 | Input 2 | Output |
+| - | - | - |
+| ![pandan_valley_mirror](./img/pandan_valley_mirror.png) | ![pandan_valley](./img/pandan_valley.png) | ![pandan_valley_wrap](./img/pandan_valley_wrap.png) |
+
 ### Input  
 
 One or more polygon soups in one of the following file formats:  
