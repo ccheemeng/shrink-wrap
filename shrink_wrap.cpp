@@ -1,14 +1,8 @@
-#include <chrono>
-#include <filesystem>
 #include <getopt.h>
-#include <iostream>
-#include <string>
-#include <vector>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/IO/polygon_soup_io.h>
 #include <CGAL/Polygon_mesh_processing/remesh_planar_patches.h>
-#include <CGAL/Real_timer.h>
 #include <CGAL/Surface_mesh.h>
 
 #include "shrink_wrap.h"
@@ -192,13 +186,12 @@ int main(int argc, char **argv) {
         std::cout << "Took: " << duration.count() << " s" << std::endl;
     }
 
-    std::cout << (remesh ? std::to_string(max_angle) : "") << std::endl;
     // Ouptut
+    std::cout << "Writing to " << out << "..." << std::endl;
     if (out.length() <= 0) {
         out = generate_output_name(filenames.front(), alpha, offset, relative,
                                    simp, ratio, policy, remesh, max_angle);
     }
-    std::cout << "Writing to " << out << "..." << std::endl;
     CGAL::IO::write_polygon_mesh(out, wrap,
                                  CGAL::parameters::stream_precision(17));
 
