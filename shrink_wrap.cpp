@@ -1,10 +1,13 @@
 #include <filesystem>
 #include <getopt.h>
 
+#include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Delaunay_triangulation_cell_base_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/IO/polygon_soup_io.h>
 #include <CGAL/Polygon_mesh_processing/remesh_planar_patches.h>
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/Triangulation_vertex_base_with_info_3.h>
 
 #include "shrink_wrap.h"
 #include "simplify.h"
@@ -12,6 +15,12 @@
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Point_3 = K::Point_3;
 using Surface_mesh = CGAL::Surface_mesh<Point_3>;
+using Delaunay = CGAL::Delaunay_triangulation_3<
+    K,
+    CGAL::Triangulation_data_structure_3<
+        CGAL::Triangulation_vertex_base_with_info_3<size_t, K>,
+        CGAL::Delaunay_triangulation_cell_base_3<K>>,
+    CGAL::Fast_location>;
 
 std::string generate_output_name(const std::string input_name,
                                  const double alpha, const double offset,
@@ -30,7 +39,6 @@ std::string generate_output_name(const std::string input_name,
 }
 
 int main(int argc, char **argv) {
-
     // Input
     const double alpha = std::stod(argv[1]);
     const double offset = std::stod(argv[2]);
@@ -136,16 +144,52 @@ int main(int argc, char **argv) {
     std::cout << "Input: " << points.size() << " points, " << faces.size()
               << " faces" << std::endl;
 
-    // ShrinkWrap
-    std::cout << "ShrinkWrapping..." << std::endl;
+    // Input preprocessing
     std::chrono::steady_clock::time_point start =
         std::chrono::steady_clock::now();
-    Surface_mesh wrap;
-    shrink_wrap::shrink_wrap(points, faces, alpha, offset, wrap, relative);
+    std::cout << "Triangulating input faces..." << std::endl;
+
+    std::vector<std::vector<size_t>> triangles;
+    for (std::vector<size_t> face : faces) {
+        if (face.size() == 3) {
+            triangles.push_back(face);
+        } else if (face.size() > 3) {
+            std::vector<std::pair<Point_3, size_t>> face_points;
+            face_points.reserve(face.size());
+            for (size_t i : face) {
+                face_points.push_back(std::pair<Point_3, size_t>(points[i], i));
+            }
+            Delaunay delaunay =
+                Delaunay(face_points.begin(), face_points.end());
+            for (Delaunay::Facet facet : delaunay.finite_facets()) {
+                std::vector<size_t> triangle;
+                triangle.reserve(3);
+                for (int j = 0; j < 4; ++j) {
+                    if (j == facet.second) {
+                        continue;
+                    }
+                    triangle.push_back(facet.first->vertex(j)->info());
+                }
+                triangles.push_back(triangle);
+            }
+        }
+    }
+
     std::chrono::steady_clock::time_point end =
         std::chrono::steady_clock::now();
     std::chrono::duration<double> duration = end - start;
+    std::cout << "Triangulate: " << triangles.size() << " triangles"
+              << std::endl;
 
+    // ShrinkWrap
+    start = std::chrono::steady_clock::now();
+    std::cout << "ShrinkWrapping..." << std::endl;
+
+    Surface_mesh wrap;
+    shrink_wrap::shrink_wrap(points, triangles, alpha, offset, wrap, relative);
+
+    end = std::chrono::steady_clock::now();
+    duration = end - start;
     std::cout << "ShrinkWrap: " << wrap.number_of_vertices() << " vertices, "
               << wrap.number_of_edges() << " edges, " << wrap.number_of_faces()
               << " faces" << std::endl;
@@ -155,12 +199,12 @@ int main(int argc, char **argv) {
     if (simp) {
         std::cout << "Simplifying by " << std::to_string(ratio) << "..."
                   << std::endl;
-
         start = std::chrono::steady_clock::now();
+
         int removed = simplify::simplify(wrap, ratio, policy);
+
         end = std::chrono::steady_clock::now();
         duration = end - start;
-
         std::cout << "Simplify: " << wrap.number_of_vertices() << " vertices, "
                   << wrap.number_of_edges() << " edges, "
                   << wrap.number_of_faces() << " faces" << std::endl;
@@ -171,16 +215,16 @@ int main(int argc, char **argv) {
     if (remesh) {
         std::cout << "Remeshing planar patches within "
                   << std::to_string(max_angle) << "..." << std::endl;
-
         start = std::chrono::steady_clock::now();
+
         Surface_mesh remeshed;
         CGAL::Polygon_mesh_processing::remesh_planar_patches(
             wrap, remeshed,
             CGAL::parameters::cosine_of_maximum_angle(std::cos(max_angle)));
         wrap = remeshed;
+
         end = std::chrono::steady_clock::now();
         duration = end - start;
-
         std::cout << "Remesh: " << wrap.number_of_vertices() << " vertices, "
                   << wrap.number_of_edges() << " edges, "
                   << wrap.number_of_faces() << " faces" << std::endl;
@@ -188,7 +232,7 @@ int main(int argc, char **argv) {
     }
 
     // Ouptut
-    if (out.length() <= 0) {
+    if (out.empty()) {
         out = generate_output_name(filenames.front(), alpha, offset, relative,
                                    simp, ratio, policy, remesh, max_angle);
     }
