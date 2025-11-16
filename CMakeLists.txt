@@ -4,6 +4,8 @@ project(ShrinkWrap)
 find_package(CGAL REQUIRED)
 find_package(Eigen3 3.4 REQUIRED NO_MODULE)
 
-add_executable(shrink_wrap shrink_wrap.cpp)
+add_executable(shrink_wrap source/shrink_wrap.cpp)
 target_link_libraries(shrink_wrap CGAL::CGAL)
 target_link_libraries(shrink_wrap Eigen3::Eigen)
+
+target_include_directories(shrink_wrap PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})

@@ -47,7 +47,7 @@ A shrink wrap in a file format corresponding to the input
 
     ```bash
     cmake -S . -B ./build-linux
-    make -C ./build-linux
+    cmake --build ./build-linux
     ```
 
 3. Run the program:  

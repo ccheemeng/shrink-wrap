@@ -9,8 +9,8 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 
-#include "shrink_wrap.h"
-#include "simplify.h"
+#include "source/shrink_wrap.h"
+#include "source/simplify.h"
 
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Point_3 = K::Point_3;
