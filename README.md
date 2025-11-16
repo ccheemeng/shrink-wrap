@@ -54,19 +54,19 @@ A shrink wrap in a file format corresponding to the input
 
     ```bash
     # Standard usage
-    ./build-linux/shrink_wrap 0.5 0.1 -i ./data/Ifc4_SampleHouse.obj
+    ./build-linux/shrink_wrap 500 1 -i ./data/Tembusu\ L12.obj
 
     # Multiple inputs
     ./build-linux/shrink_wrap 500 1 -i ./data/pandan_valley.obj -i pandan_valley.obj
 
     # Simplify shrink wrap
-    ./build-linux/shrink_wrap 500 1 -i ./data/Ifc4_SampleHouse.obj -s 0.5
+    ./build-linux/shrink_wrap 500 1 -i ./data/Tembusu\ L12.obj -s 0.5
 
     # Remesh shrink wrap
     ./build-linux/shrink_wrap 500 1 -i ./data/pandan_valley.obj -r0.1
 
     # Simplify and remesh (not recommended)
-    ./build-linux/shrink_wrap 0.5 0.1 -i ./data/Ifc4_SampleHouse.obj -s 0.5 -p pp -r0.05 -o wonky_house.obj
+    ./build-linux/shrink_wrap 500 1 -i ./data/Tembusu\ L12.obj -s 0.5 -p pp -r0.05 -o ./data/Tembusu\ L12\ wrap.obj
     ```
 
 ## Arguments  
