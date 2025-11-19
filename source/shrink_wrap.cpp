@@ -94,12 +94,12 @@ int main(int argc, char **argv) {
     std::vector<Vector_3<double>> vector_3s;
     std::vector<std::vector<std::size_t>> faces;
     std::vector<std::string> materials;
-    std::set<std::string> material_files;
+    std::set<std::filesystem::path> material_files;
     for (std::string filename : filenames) {
         std::vector<Vector_3<double>> file_vector_3s;
         std::vector<std::vector<std::size_t>> file_faces;
         std::vector<std::string> file_materials;
-        std::set<std::string> file_material_files;
+        std::set<std::filesystem::path> file_material_files;
         std::cout << "Reading " << filename << "..." << std::endl;
 
         if (!read_obj_vertices_faces_materials_3::

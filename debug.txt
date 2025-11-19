@@ -1,0 +1,100 @@
+Reading ./data/Tembusu L12.obj...
+exists: ./data/Tembusu L12.mtl
+is relative: ./data/Tembusu L12.mtl
+./data/Tembusu L12.mtl
+./data/Tembusu L12.mtl
+neq
+is relative: ./data/test1.mtl
+./data/Tembusu L12.mtl
+./data/test1.mtl
+neq
+
+./data/test1.mtl
+neq
+is relative: ./data/test2.mtl
+./data/Tembusu L12.mtl
+./data/test2.mtl
+neq
+
+./data/test2.mtl
+neq
+
+./data/test2.mtl
+neq
+
+./data/test2.mtl
+neq
+is relative: ./data/test3.mtl
+./data/Tembusu L12.mtl
+./data/test3.mtl
+neq
+
+./data/test3.mtl
+neq
+
+./data/test3.mtl
+neq
+
+./data/test3.mtl
+neq
+
+./data/test3.mtl
+neq
+
+./data/test3.mtl
+neq
+
+./data/test3.mtl
+neq
+
+./data/test3.mtl
+neq
+is relative: ./data/Ifc4_SampleHouse.mtl
+./data/Tembusu L12.mtl
+./data/Ifc4_SampleHouse.mtl
+neq
+
+./data/Ifc4_SampleHouse.mtl
+neq
+
+./data/Ifc4_SampleHouse.mtl
+neq
+
+./data/Ifc4_SampleHouse.mtl
+neq
+
+./data/Ifc4_SampleHouse.mtl
+neq
+
+./data/Ifc4_SampleHouse.mtl
+neq
+
+./data/Ifc4_SampleHouse.mtl
+neq
+
+./data/Ifc4_SampleHouse.mtl
+neq
+
+./data/Ifc4_SampleHouse.mtl
+neq
+
+./data/Ifc4_SampleHouse.mtl
+neq
+
+./data/Ifc4_SampleHouse.mtl
+neq
+
+./data/Ifc4_SampleHouse.mtl
+neq
+
+./data/Ifc4_SampleHouse.mtl
+neq
+
+./data/Ifc4_SampleHouse.mtl
+neq
+
+./data/Ifc4_SampleHouse.mtl
+neq
+
+./data/Ifc4_SampleHouse.mtl
+neq

@@ -23,8 +23,10 @@ bool read_obj_vertices_faces_materials_3(
     const std::string &fname, std::vector<Vector_3<double>> &points,
     std::vector<std::vector<size_t>> &faces,
     std::vector<std::string> &materials,
-    std::set<std::string> &material_files) {
+    std::set<std::filesystem::path> &material_files) {
+
     std::filesystem::path fpath = std::filesystem::path(fname);
+    std::filesystem::path cwd = fpath.parent_path();
     std::string extension = fpath.extension().string();
     if (extension != ".obj") {
         std::cerr << "Unknown input file extension: " << extension << std::endl;
@@ -37,16 +39,17 @@ bool read_obj_vertices_faces_materials_3(
     material_files.clear();
 
     std::filesystem::path base_material_file =
-        fpath.parent_path() /
-        std::filesystem::path(fpath.stem().string() + ".mtl");
-    if (std::filesystem::exists(base_material_file)) {
-        material_files.insert(base_material_file.string());
-    }
+        cwd / std::filesystem::path(fpath.stem().string() + ".mtl");
+    material_files.insert(base_material_file);
 
     std::ifstream file = std::ifstream(fpath);
     std::string material = "";
     std::string line;
     while (std::getline(file, line)) {
+        line.erase(std::remove(line.begin(), line.end(), '\n'), line.cend());
+        line.erase(std::remove(line.begin(), line.end(), '\r'),
+                   line.cend()); // Account for DOS and Unix line endings I'm
+                                 // not taking any chances
         std::vector<std::string> parts = split(line, ' ');
         if (parts.empty()) {
             continue;
@@ -95,14 +98,17 @@ bool read_obj_vertices_faces_materials_3(
             std::filesystem::path material_path =
                 std::filesystem::path(from_first_space.substr(first_not_space));
             if (material_path.is_absolute()) {
-                material_files.insert(material_path.string());
+                material_files.insert(material_path);
             } else {
-                material_files.insert(
-                    (fpath.parent_path() / material_path).string());
+                material_files.insert(cwd / material_path);
             }
         }
     }
     file.close();
+
+    for (std::filesystem::path material_file : material_files) {
+        std::cout << material_file << std::endl;
+    }
 
     return true;
 }

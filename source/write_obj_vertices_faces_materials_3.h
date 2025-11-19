@@ -10,7 +10,7 @@ bool write_obj_vertices_faces_materials_3(
     const std::string &fname, const std::vector<Vector_3<double>> &points,
     const std::vector<std::vector<size_t>> &faces,
     const std::vector<std::string> &materials,
-    const std::set<std::string> &material_files) {
+    const std::set<std::filesystem::path> &material_files) {
     std::map<std::string, std::vector<std::vector<size_t>>> material_faces_map;
     for (int i = 0; i < std::min(faces.size(), materials.size()); ++i) {
         std::vector<size_t> face = faces[i];
@@ -30,14 +30,8 @@ bool write_obj_vertices_faces_materials_3(
                       std::filesystem::path(fpath.stem().string() + ".mtl"));
     obj << "mtllib " << fpath.stem().string() + ".mtl" << "\n";
 
-    for (std::string material_file : material_files) {
-        std::cout << material_file << std::endl;
-    }
-
-    for (std::string material_file : material_files) {
-        std::cout << "Reading: " << material_file << std::endl;
-        if (std::filesystem::exists(material_file)) {
-            std::cout << "Cannot: " << material_file << std::endl;
+    for (std::filesystem::path material_file : material_files) {
+        if (!std::filesystem::exists(material_file)) {
             continue;
         }
         std::ifstream material_stream = std::ifstream(material_file);
