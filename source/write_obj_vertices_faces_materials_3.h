@@ -24,6 +24,9 @@ bool write_obj_vertices_faces_materials_3(
     }
 
     std::filesystem::path fpath = std::filesystem::path(fname);
+    if (!std::filesystem::exists(fpath.parent_path())) {
+        std::filesystem::create_directory(fpath.parent_path());
+    }
     std::ofstream obj = std::ofstream(fpath);
     std::ofstream mtl =
         std::ofstream(fpath.parent_path() /

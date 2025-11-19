@@ -1,6 +1,5 @@
 *.mtl
 *.obj
-*.off
 !pandan_valley.obj
 !pandan_valley_mirror.obj
 !Tembusu\ L12.obj

@@ -106,10 +106,6 @@ bool read_obj_vertices_faces_materials_3(
     }
     file.close();
 
-    for (std::filesystem::path material_file : material_files) {
-        std::cout << material_file << std::endl;
-    }
-
     return true;
 }
 } // namespace read_obj_vertices_faces_materials_3
