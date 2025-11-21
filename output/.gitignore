@@ -1,2 +1,6 @@
-*
-!.gitignore
+*.mtl
+*.obj
+!KPF Robinson Tower wrap.mtl
+!KPF Robinson Tower wrap.obj
+!Tembusu L12 wrap.mtl
+!Tembusu L12 wrap.obj

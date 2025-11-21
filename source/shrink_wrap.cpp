@@ -55,7 +55,7 @@ int main(int argc, char **argv) {
     std::string out = "";
 
     static struct option long_options[] = {{"input", required_argument, 0, 'i'},
-                                           {"relative", no_argument, 0, 0},
+                                           {"relative", no_argument, 0, 'r'},
                                            {"out", required_argument, 0, 'o'},
                                            {0, 0, 0, 0}};
     optind = 3;
@@ -66,14 +66,12 @@ int main(int argc, char **argv) {
             break;
         }
         switch (opt) {
-        case 0: {
-            if (long_options[option_index].name == "relative") {
-                relative = true;
-            }
-            break;
-        }
         case 'i': {
             filenames.push_back(optarg);
+            break;
+        }
+        case 'r': {
+            relative = true;
             break;
         }
         case 'o': {

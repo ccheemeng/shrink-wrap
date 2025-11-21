@@ -4,32 +4,17 @@ This utility generates a watertight and orientable mesh over input 3D geometries
 via the [CGAL library](https://doc.cgal.org/latest/Alpha_wrap_3/index.html). 
 This mesh is termed a "shrink wrap".  
 
-A shrink wrap of one storey of an apartment building:  
+ShrinkWrap takes as inputs and outputs `.obj` files, and maps materials if available.  
 
+A shrink wrap of one storey of an apartment building:  
 | Input | Output |
 | - | - |
 | ![Tembusu L12](./img/Tembusu%20L12.png) | ![Tembusu L12 wrap](./img/Tembusu%20L12%20wrap.png) |
 
 A shrink wrap from multiple inputs:  
-
 | Input 1 | Input 2 | Output |
 | - | - | - |
-| ![pandan_valley_mirror](./img/pandan_valley_mirror.png) | ![pandan_valley](./img/pandan_valley.png) | ![pandan_valley_wrap](./img/pandan_valley_wrap.png) |
-
-### Input  
-
-One or more polygon soups in one of the following file formats:  
-
-* `.off`  
-* `.obj`  
-* `.stl`  
-* `.ply`  
-* `.ts`  
-* `.vtp`  
-
-### Output  
-
-A shrink wrap in a file format corresponding to the input  
+| ![KPF Robinson Tower Structure](./img/KPF%20Robinson%20Tower/KPF%20Robinson%20Tower%20Structure.png) | ![KPF Robinson Tower Facade](./img/KPF%20Robinson%20Tower/KPF%20Robinson%20Tower%20Facade.png) | ![KPF Robinson Tower wrap](./img/KPF%20Robinson%20Tower/KPF%20Robinson%20Tower%20wrap.png) |
 
 ## Installation  
 
@@ -57,31 +42,16 @@ A shrink wrap in a file format corresponding to the input
     ./build-linux/shrink_wrap 500 1 -i ./data/Tembusu\ L12.obj
 
     # Multiple inputs
-    ./build-linux/shrink_wrap 500 1 -i ./data/pandan_valley.obj -i pandan_valley.obj
-
-    # Simplify shrink wrap
-    ./build-linux/shrink_wrap 500 1 -i ./data/Tembusu\ L12.obj -s 0.5
-
-    # Remesh shrink wrap
-    ./build-linux/shrink_wrap 500 1 -i ./data/pandan_valley.obj -r0.1
-
-    # Simplify and remesh (not recommended)
-    ./build-linux/shrink_wrap 500 1 -i ./data/Tembusu\ L12.obj -s 0.5 -p pp -r0.05 -o ./data/Tembusu\ L12\ wrap.obj
+    cd ./data/KPF\ Robinson\ Tower
+    ../../build-linux/shrink_wrap .5 .001 -i KPF\ Robinson\ Tower\ Facade\ Lower\ Left\ 2.obj -i KPF\ Robinson\ Tower\ Facade\ Upper\ Back\ 3.obj -i KPF\ Robinson\ Tower\ 23-25F.obj -i KPF\ Robinson\ Tower\ 26-27F.obj -i KPF\ Robinson\ Tower\ 8F.obj -i KPF\ Robinson\ Tower\ 18-19F.obj -i KPF\ Robinson\ Tower\ 2-3F.obj -i KPF\ Robinson\ Tower\ Facade\ Upper\ Right\ 1.obj -i KPF\ Robinson\ Tower\ Facade\ Upper\ Left\ 5.obj -i KPF\ Robinson\ Tower\ 6F.obj -i KPF\ Robinson\ Tower\ Facade\ Lower\ Right\ 3.obj -i KPF\ Robinson\ Tower\ Facade\ Upper\ Front\ 2.obj -i KPF\ Robinson\ Tower\ Facade\ Upper\ Right\ 2.obj -i KPF\ Robinson\ Tower\ Facade\ Upper\ Left\ 2.obj -i KPF\ Robinson\ Tower\ Facade\ Upper\ Right\ 4.obj -i KPF\ Robinson\ Tower\ 4-5F.obj -i KPF\ Robinson\ Tower\ Facade\ Ground.obj -i KPF\ Robinson\ Tower\ 12-14F.obj -i KPF\ Robinson\ Tower\ 7F.obj -i KPF\ Robinson\ Tower\ Facade\ Upper\ Back\ 1.obj -i KPF\ Robinson\ Tower\ Facade\ Upper\ Back\ 4.obj -i KPF\ Robinson\ Tower\ Facade\ Upper\ Right\ 6.obj -i KPF\ Robinson\ Tower\ Facade\ Upper\ Left\ 4.obj -i KPF\ Robinson\ Tower\ Facade\ Upper\ Left\ 6.obj -i KPF\ Robinson\ Tower\ Facade\ Upper\ Back\ 2.obj -i KPF\ Robinson\ Tower\ Facade\ Lower\ Front.obj -i KPF\ Robinson\ Tower\ Facade\ Lower\ Left\ 1.obj -i KPF\ Robinson\ Tower\ Facade\ Lower\ Right\ 2.obj -i KPF\ Robinson\ Tower\ 28-32F.obj -i KPF\ Robinson\ Tower\ 9-11F.obj -i KPF\ Robinson\ Tower\ Facade\ Upper\ Left\ 7.obj -i KPF\ Robinson\ Tower\ Facade\ Upper\ Left\ 1.obj -i KPF\ Robinson\ Tower\ Facade\ Lower\ Right\ 1.obj -i KPF\ Robinson\ Tower\ Facade\ Upper\ Left\ 3.obj -i KPF\ Robinson\ Tower\ 1F.obj -i KPF\ Robinson\ Tower\ Facade\ Upper\ Right\ 5.obj -i KPF\ Robinson\ Tower\ Basement.obj -i KPF\ Robinson\ Tower\ Facade\ Upper\ Front\ 1.obj -i KPF\ Robinson\ Tower\ Facade\ Lower\ Left\ 3.obj -i KPF\ Robinson\ Tower\ Facade\ Upper\ Right\ 3.obj -i KPF\ Robinson\ Tower\ 20-22F.obj -i KPF\ Robinson\ Tower\ Facade\ Upper\ Front\ 3.obj -i KPF\ Robinson\ Tower\ 15-17F.obj
     ```
 
 ## Arguments  
 
-| Name       | Flags | Type          | Description                                                                                                                                                                                                                                 | Option Required | Argument Required | Default         |
-|------------|-------|---------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------|-------------------|-----------------|
-| `alpha`    | -     | `double`      | Alpha parameter (see [CGAL 3D Alpha Wrapping](https://doc.cgal.org/latest/Alpha_wrap_3/index.html)), must be greater than 0                                                                                                                 | -               | -                 | -               |
-| `offset`   | -     | `double`      | Offset parameter (see [CGAL 3D Alpha Wrapping](https://doc.cgal.org/latest/Alpha_wrap_3/index.html)), must be greater than 0                                                                                                                | -               | -                 | -               |
-| `input`    | `-i`  | `std::string` | Input filename; use one flag per input file                                                                                                                                                                                                 | `true`          | `true`            | -               |
-| `relative` | -     | `bool`        | If used, the alpha and offset used are the maximum diagonal length of the orthogonal box bounding the input divided by `alpha` and `offset` respectively                                                                                    | `false`         | `true`            | `false`         |
-| `simplify` | `-s`  | `double`      | If `0.0 < simplify <= 1.0`, the shrink wrap is simplified until the ratio of the number of edges in the simplified mesh to the number of edges in the shrink wrap is equal to `simplify`                                                    | `false`         | `true`            | `-1.0`          |
-| `policy`   | `-p`  | `std::string` | If one of `"cp"`, `"ct"`, `"pp"`, or `"pt"`, uses a Garland-Heckbert "Classic Plane", Garland-Heckbert triangle-based, Trettner and Kobbelt "Probabilistic Plane", or Trettner and Kobbelt "Probabilistic Triangle" simplification strategy | `false`         | `true`            | `"cp"`          |
-| `remesh`   | `-r`  | `double`      | If used, the shrink wrap or simplified shrink wrap is remeshed such that edge-connected faces within an angle of `remesh` of each other are redrawn onto the same plane                                                                     | `false`         | `false`           | `0.0`           |
-| `out`      | `-o`  | `std::string` | Output filename; if not provided this is derived from the first input filename and other parameters                                                                                                                                         | `false`         | `true`            | See description |
-
-
-Note that simplifying and/or remeshing the shrink wrap will no longer guarantee 
-a watertight or orientable output.
+| Name | Flags | Type | Description | Option Required | Argument Required | Default |
+|-|-|-|-|-|-|-|
+| `alpha` | - | `double` | Alpha parameter (see [CGAL 3D Alpha Wrapping](https://doc.cgal.org/latest/Alpha_wrap_3/index.html)), must be greater than 0 | Positional argument | - | - |
+| `offset` | - | `double` | Offset parameter (see [CGAL 3D Alpha Wrapping](https://doc.cgal.org/latest/Alpha_wrap_3/index.html)), must be greater than 0 | Positional argument | - | - |
+| `input` | `-i` | `std::string` | Input filename; use one flag per input file | `true` | `true` | - |
+| `relative` | `-r` | `bool` | If used, the alpha and offset used are the maximum diagonal length of the orthogonal box bounding the input divided by `alpha` and `offset` respectively | `false` | `true` | `false` |
+| `out` | `-o` | `std::string` | Output filename; if not provided this is derived from the first input filename and other parameters | `false` | `true` | See description |

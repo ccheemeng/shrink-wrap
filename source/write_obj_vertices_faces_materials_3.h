@@ -24,21 +24,27 @@ bool write_obj_vertices_faces_materials_3(
     }
 
     std::filesystem::path fpath = std::filesystem::path(fname);
-    if (!std::filesystem::exists(fpath.parent_path())) {
-        std::filesystem::create_directory(fpath.parent_path());
+    if (!(std::filesystem::exists(fpath.parent_path()) ||
+          fpath.parent_path().empty())) {
+        try {
+            std::filesystem::create_directory(fpath.parent_path());
+        } catch (const std::filesystem::filesystem_error &e) {
+            std::cerr << "what(): " << e.what() << std::endl;
+            fpath = fpath.filename();
+        }
     }
     std::ofstream obj = std::ofstream(fpath);
     std::ofstream mtl =
         std::ofstream(fpath.parent_path() /
                       std::filesystem::path(fpath.stem().string() + ".mtl"));
-    obj << "mtllib " << fpath.stem().string() + ".mtl" << "\n";
+    obj << "mtllib " << fpath.stem().string() + ".mtl" << '\n';
 
     for (std::filesystem::path material_file : material_files) {
         if (!std::filesystem::exists(material_file)) {
             continue;
         }
         std::ifstream material_stream = std::ifstream(material_file);
-        mtl << material_stream.rdbuf() << "\n";
+        mtl << material_stream.rdbuf() << '\n';
         material_stream.close();
     }
 
@@ -46,21 +52,21 @@ bool write_obj_vertices_faces_materials_3(
 
     for (Vector_3<double> point : points) {
         obj << "v " << std::to_string(point.x) << " " << std::to_string(point.y)
-            << " " << std::to_string(point.z) << "\n";
+            << " " << std::to_string(point.z) << '\n';
     }
 
     for (std::pair<std::string, std::vector<std::vector<size_t>>>
              material_faces : material_faces_map) {
         std::string material = material_faces.first;
         std::vector<std::vector<size_t>> faces = material_faces.second;
-        obj << "usemtl " << material << "\n";
+        obj << "usemtl " << material << '\n';
         for (std::vector<size_t> face : faces) {
             std::string line = "f ";
             for (size_t i : face) {
                 line += std::to_string(i + 1) + " ";
             }
             line.pop_back();
-            obj << line << "\n";
+            obj << line << '\n';
         }
     }
 
