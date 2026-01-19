@@ -18,7 +18,14 @@ A shrink wrap from multiple inputs:
 
 ## Installation  
 
-### Conda Linux  
+### Obtain software  
+
+#### Download binary  
+
+1. Download the shrink wrap binary from the latest release in this repo.
+1. Place it in a `build-linux/` directory and rename it to `shrink_wrap`, or replace the run commands below to the appropriate location of the binary.
+
+#### Build from source  
 
 1. Create a conda environment with the necessary preqrequisites via the 
 `environment.yml` file:  
@@ -28,14 +35,14 @@ A shrink wrap from multiple inputs:
     conda activate shrink-wrap
     ```
 
-2. Build and compile the program:  
+1. Build and compile the program:  
 
     ```bash
     cmake -S . -B ./build-linux
     cmake --build ./build-linux
     ```
 
-3. Run the program:  
+### Run the program  
 
     ```bash
     # Standard usage
