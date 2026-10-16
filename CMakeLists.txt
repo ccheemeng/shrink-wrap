@@ -10,7 +10,8 @@ set(BUILD_SHARED_LIBS OFF)
 find_package(CGAL REQUIRED)
 find_package(Eigen3 REQUIRED NO_MODULE)
 
-add_executable(compile_test test/shrink_wrap_test.cc)
+file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cc")
+add_executable(compile_test test/shrink_wrap_test.cc ${SOURCES})
 target_link_libraries(compile_test CGAL::CGAL)
 target_link_libraries(compile_test Eigen3::Eigen)
 
