@@ -19,7 +19,7 @@ Mesh::Mesh(
 
   std::vector<Face> valid_faces;
   for (Face face : faces) {
-    if (!face.Valid()) {
+    if (!(face.Valid())) {
       continue;
     }
     std::optional<std::pair<std::size_t, std::size_t>> vertex_minmax = face
@@ -32,7 +32,7 @@ Mesh::Mesh(
           && minmax.second < vertices.size();
       }
     );
-    if (!valid_vertices.value_or(true)) {
+    if (!(valid_vertices.value_or(true))) {
       continue;
     }
     valid_faces.push_back(face);
@@ -58,5 +58,25 @@ std::vector<Face> Mesh::GetFaces() const {
 
 bool Mesh::Valid() const {
   return this->GetVertices().empty();
+}
+
+Mesh Mesh::Triangulate() const {
+  std::vector<Face> triangles;
+  for (Face face : this->GetFaces()) {
+    if (!(face.Valid())) {
+      continue;
+    }
+
+    std::vector<Face> face_triangles;
+    if (face.NumVertices() == 3) {
+      face_triangles = std::vector<Face>({face});
+    } else {
+      face_triangles = face.Triangulate(this->GetVertices());
+    }
+    for (Face triangle : face_triangles) {
+      triangles.push_back(triangle);
+    }
+  }
+  return Mesh(this->GetVertices(), triangles, this->materials_);
 }
 }  // namespace mesh

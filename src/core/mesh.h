@@ -20,7 +20,9 @@ class Mesh {
 
     std::vector<std::array<double, 3>> GetVertices() const;
     std::vector<Face> GetFaces() const;
+
     bool Valid() const;
+    Mesh Triangulate() const;
 
   private:
     std::vector<std::array<double, 3>> vertices_;
