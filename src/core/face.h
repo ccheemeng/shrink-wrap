@@ -11,8 +11,8 @@ public:
   Face(std::vector<std::size_t> vertices);
   Face(std::vector<std::size_t> vertices, int material);
 
-  std::optional<std::pair<std::size_t, std::size_t>> get_vertex_minmax() const;
-  bool valid() const;
+  std::optional<std::pair<std::size_t, std::size_t>> GetVertexMinmax() const;
+  bool Valid() const;
 
 private:
   std::vector<std::size_t> vertices_;

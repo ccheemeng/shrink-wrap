@@ -9,7 +9,15 @@
 
 namespace mesh {
 namespace {
-  std::vector<std::string> split(
+  float StringToFloat(const std::string& s) {
+    return std::stof(s);
+  }
+
+  int StringToInt(const std::string& s) {
+    return std::stoi(s);
+  }
+
+  std::vector<std::string> Split(
     const std::string& str, const char& delimiter
   ) {
     std::stringstream stream = std::stringstream(str);
@@ -24,7 +32,7 @@ namespace {
   }
 
   template <typename T, typename U>
-  std::optional<U> try_cast(
+  std::optional<U> TryCast(
     const std::function<U(const T&)>& cast, const T& value
   ) {
     try {
@@ -34,145 +42,125 @@ namespace {
     }
   }
 
-  std::optional<std::array<float, 3>> strings_to_array_float_3(
+  std::optional<std::array<float, 3>> StringsToArrayFloat3(
     const std::string& a, const std::string& b, const std::string& c
   ) {
-    return try_cast<std::string, float>(std::stof, a)
+    return TryCast<std::string, float>(StringToFloat, a)
       .and_then([b](float x) {
-        return try_cast<std::string, float>(std::stof, b)
+        return TryCast<std::string, float>(StringToFloat, b)
           .transform([x](float y) {
             return std::array<float, 2>({x, y});
           });
       })
       .and_then([c](std::array<float, 2> xy) {
-        return try_cast<std::string, float>(std::stof, c)
+        return TryCast<std::string, float>(StringToFloat, c)
           .transform([xy](float z) {
             return std::array<float, 3>({xy[0], xy[1], z});
-          })
+          });
       });
   }
 }  // namespace
 
-Material Material::from_description(const std::string& description) {
+Material Material::FromDescription(const std::string& description) {
   Material material;
 
-  new_description = description;
-  new_description
-    .erase(std::remove(new_description.begin(), new_description.end(), '\r'));
+  std::string new_description = description;
+  new_description.erase(
+    std::remove(new_description.begin(), new_description.end(), '\r')
+  );
 
-  std::vector<std::string> statements = split(new_description, '\n');
+  std::vector<std::string> statements = Split(new_description, '\n');
   for (std::string statement : statements) {
-    std::vector<std::string> parts = split(line, ' ');
+    std::vector<std::string> parts = Split(statement, ' ');
 
     if (parts.empty()) {
       continue;
     }
 
-    switch (parts[0]) {
-      case "newmtl": {
-        if (parts.size() < 2) {
-          break;
-        }
-        material.name_ = parts[1];
+    if (parts[0] == "newmtl") {
+      if (parts.size() < 2) {
         break;
       }
-
-      case "Ka": {
-        if (parts.size() < 4) {
-          break;
-        }
-        material.ambient_ = strings_to_array_float_3(
-          parts[1], parts[2], parts[3]
-        );
+      material.name_ = parts[1];
+    } else if (parts[0] == "Ka") {
+      if (parts.size() < 4) {
         break;
       }
-
-      case "Kd": {
-        if (parts.size() < 4) {
-          break;
-        }
-        material.diffuse_ = strings_to_array_float_3(
-          parts[1], parts[2], parts[3]
-        );
+      material.ambient_ = StringsToArrayFloat3(
+        parts[1], parts[2], parts[3]
+      );
+    } else if (parts[0] == "Kd") {
+      if (parts.size() < 4) {
         break;
       }
-
-      case "Ks": {
-        if (parts.size() < 4) {
-          break;
-        }
-        material.specular_ = strings_to_array_float_3(
-          parts[1], parts[2], parts[3]
-        );
+      material.diffuse_ = StringsToArrayFloat3(
+        parts[1], parts[2], parts[3]
+      );
+    } else if (parts[0] == "Ks") {
+      if (parts.size() < 4) {
         break;
       }
-
-      case "Tf": {
-        if (parts.size() < 4) {
-          break;
-        }
-        material.transmission_ = strings_to_array_float_3(
-          parts[1], parts[2], parts[3]
-        );
+      material.specular_ = StringsToArrayFloat3(
+        parts[1], parts[2], parts[3]
+      );
+    } else if (parts[0] == "Tf") {
+      if (parts.size() < 4) {
         break;
       }
-
-      case "illum": {
-        if (parts.size() < 2) {
-          break;
-        }
-        material.illumination_ = try_cast<std::string, int>(parts[1]);
+      material.transmission_ = StringsToArrayFloat3(
+        parts[1], parts[2], parts[3]
+      );
+    } else if (parts[0] == "illum") {
+      if (parts.size() < 2) {
         break;
       }
-
-      case "d": {
-        if (parts.size() == 2) {
-          material.dissolve_ = try_cast<std::string, float>(parts[1])
-            .transform([](float dissolve) {
-              return internal::Dissolve({false, dissolve});
-            });
-        } else if (parts.size() > 2 && parts[1] == "-halo") {
-          material.dissolve_ = try_cast<std::string, float>(parts[2])
-            .transform([](float dissolve) {
-              return internal::Dissolve({true, dissolve});
-            });
-        }
+      material.illumination_ = TryCast<std::string, int>(
+        StringToInt, parts[1]
+      );
+    } else if (parts[0] == "d") {
+      if (parts.size() == 2) {
+        material.dissolve_ = TryCast<std::string, float>(
+          StringToFloat, parts[1]
+        )
+          .transform([](float dissolve) {
+            return internal::Dissolve({false, dissolve});
+          });
+      } else if (parts.size() > 2 && parts[1] == "-halo") {
+        material.dissolve_ = TryCast<std::string, float>(
+          StringToFloat, parts[2]
+        )
+          .transform([](float dissolve) {
+            return internal::Dissolve({true, dissolve});
+          });
+      }
+    } else if (parts[0] == "Ns") {
+      if (parts.size() < 2) {
         break;
       }
-
-      case "Ns": {
-        if (parts.size() < 2) {
-          break;
-        }
-        material.specular_exponent_ = try_cast<std::string, float>(parts[1]);
+      material.specular_exponent_ = TryCast<std::string, float>(
+        StringToFloat, parts[1]
+      );
+    } else if (parts[0] == "sharpness") {
+      if (parts.size() < 2) {
         break;
       }
-
-      case "sharpness": {
-        if (parts.size() < 2) {
-          break;
-        }
-        material.sharpness_ = try_cast<std::string, float>(parts[1]);
+      material.sharpness_ = TryCast<std::string, float>(
+        StringToFloat, parts[1]
+      );
+    } else if (parts[0] == "Ni") {
+      if (parts.size() < 2) {
         break;
       }
-
-      case "Ni": {
-        if (parts.size() < 2) {
-          break;
-        }
-        material.optical_density_ = try_cast<std::string, float>(parts[1]);
-      }
-
-      default: {
-        break;
-      }
+      material.optical_density_ = TryCast<std::string, float>(
+        StringToFloat, parts[1]
+      );
     }
   }
 
   return material;
 }
 
-std::string Material::to_description() const {
+std::string Material::ToDescription() const {
   return "newmtl " + this->name_
     + this->ambient_
       .transform([](std::array<float, 3> rgb) {
@@ -184,7 +172,7 @@ std::string Material::to_description() const {
       .value_or("")
     + this->diffuse_
       .transform([](std::array<float, 3> rgb) {
-        return "\Kd"
+        return "\nKd"
           + ' ' + std::to_string(rgb[0])
           + ' ' + std::to_string(rgb[1])
           + ' ' + std::to_string(rgb[2]);
@@ -192,7 +180,7 @@ std::string Material::to_description() const {
       .value_or("")
     + this->specular_
       .transform([](std::array<float, 3> rgb) {
-        return "\Ks"
+        return "\nKs"
           + ' ' + std::to_string(rgb[0])
           + ' ' + std::to_string(rgb[1])
           + ' ' + std::to_string(rgb[2]);
@@ -223,7 +211,7 @@ std::string Material::to_description() const {
       .transform([](float x) { return "\nsharpness " + std::to_string(x); })
       .value_or("")
     + this->optical_density_
-      .tranform([](float x) { return "\nNi " + std::to_string(x); })
+      .transform([](float x) { return "\nNi " + std::to_string(x); })
       .value_or("");
 }
 }  // namespace mesh

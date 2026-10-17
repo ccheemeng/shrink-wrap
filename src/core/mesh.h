@@ -18,9 +18,9 @@ class Mesh {
       std::vector<Material> materials
     );
 
-    std::vector<std::array<double, 3>> get_vertices() const;
-    std::vector<Face> get_faces() const;
-    bool valid() const;
+    std::vector<std::array<double, 3>> GetVertices() const;
+    std::vector<Face> GetFaces() const;
+    bool Valid() const;
 
   private:
     std::vector<std::array<double, 3>> vertices_;

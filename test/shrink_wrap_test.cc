@@ -4,6 +4,6 @@
 #include <iostream>
 
 int main() {
-    std::cout << shrink_wrap::shrink_wrap(mesh::Mesh(std::vector<std::array<double, 3>>(), std::vector<mesh::Face>())).valid() ? "true" : "false";
+    std::cerr << (shrink_wrap::ShrinkWrap(mesh::Mesh(std::vector<std::array<double, 3>>(), std::vector<mesh::Face>())).Valid() ? "true" : "false") << std::endl;
     return 0;
 }

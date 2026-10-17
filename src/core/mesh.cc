@@ -19,18 +19,19 @@ Mesh::Mesh(
 
   std::vector<Face> valid_faces;
   for (Face face : faces) {
-    if (!face.valid()) {
+    if (!face.Valid()) {
       continue;
     }
     std::optional<std::pair<std::size_t, std::size_t>> vertex_minmax = face
-      .get_vertex_minmax()
+      .GetVertexMinmax();
     std::optional<bool> valid_vertices = vertex_minmax.transform(
       [vertices](std::pair<std::size_t, std::size_t> minmax) {
         return minmax.first >= 0
           && minmax.first < vertices.size()
           && minmax.second >= 0
           && minmax.second < vertices.size();
-    )
+      }
+    );
     if (!valid_vertices.value_or(true)) {
       continue;
     }
@@ -42,20 +43,20 @@ Mesh::Mesh(
 Mesh::Mesh(
   std::vector<std::array<double, 3>> vertices,
   std::vector<Face> faces,
-  std::vector<Material> materials,
+  std::vector<Material> materials
 ) : Mesh(vertices, faces) {
   this->materials_ = materials;
 }
 
-std::vector<std::array<double, 3>> Mesh::get_vertices() const {
+std::vector<std::array<double, 3>> Mesh::GetVertices() const {
   return this->vertices_;
 }
 
-std::vector<Face> Mesh::get_faces() const {
+std::vector<Face> Mesh::GetFaces() const {
   return this->faces_;
 }
 
-bool Mesh::valid() const {
-  return this->get_vertices().empty();
+bool Mesh::Valid() const {
+  return this->GetVertices().empty();
 }
 }  // namespace mesh

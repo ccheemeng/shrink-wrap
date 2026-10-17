@@ -5,7 +5,7 @@
 #include "core/mesh.h"
 
 namespace shrink_wrap {
-mesh::Mesh shrink_wrap(mesh::Mesh mesh) {
+mesh::Mesh ShrinkWrap(mesh::Mesh mesh) {
   return mesh;
 }
 }  // namespace shrink_wrap

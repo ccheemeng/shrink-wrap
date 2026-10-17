@@ -15,8 +15,8 @@ struct Dissolve {
 
 class Material {
   public:
-    static Material from_description(const std::string& description);
-    std::string to_description() const;
+    static Material FromDescription(const std::string& description);
+    std::string ToDescription() const;
 
   private:
     std::string name_;
