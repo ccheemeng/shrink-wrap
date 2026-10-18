@@ -20,6 +20,11 @@ class Mesh {
 
     std::vector<std::array<double, 3>> GetVertices() const;
     std::vector<Face> GetFaces() const;
+    std::vector<Material> GetMaterials() const;
+    Mesh SetVerticesFaces(
+      const std::vector<std::array<double, 3>>& vertices,
+      const std::vector<Face>& faces
+    ) const;
 
     bool Valid() const;
     Mesh Triangulate() const;

@@ -18,7 +18,7 @@ Mesh::Mesh(
   this->vertices_ = vertices;
 
   std::vector<Face> valid_faces;
-  for (Face face : faces) {
+  for (const Face& face : faces) {
     if (!(face.Valid())) {
       continue;
     }
@@ -56,13 +56,24 @@ std::vector<Face> Mesh::GetFaces() const {
   return this->faces_;
 }
 
+std::vector<Material> Mesh::GetMaterials() const {
+  return this->materials_;
+}
+
+Mesh Mesh::SetVerticesFaces(
+  const std::vector<std::array<double, 3>>& vertices,
+  const std::vector<Face>& faces
+) const {
+  return Mesh(vertices, faces, this->materials_);
+}
+
 bool Mesh::Valid() const {
   return this->GetVertices().empty();
 }
 
 Mesh Mesh::Triangulate() const {
   std::vector<Face> triangles;
-  for (Face face : this->GetFaces()) {
+  for (const Face& face : this->GetFaces()) {
     if (!(face.Valid())) {
       continue;
     }
@@ -73,10 +84,10 @@ Mesh Mesh::Triangulate() const {
     } else {
       face_triangles = face.Triangulate(this->GetVertices());
     }
-    for (Face triangle : face_triangles) {
+    for (const Face& triangle : face_triangles) {
       triangles.push_back(triangle);
     }
   }
-  return Mesh(this->GetVertices(), triangles, this->materials_);
+  return Mesh(this->GetVertices(), triangles, this->GetMaterials());
 }
 }  // namespace mesh

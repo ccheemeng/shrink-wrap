@@ -70,7 +70,7 @@ Material Material::FromDescription(const std::string& description) {
   );
 
   std::vector<std::string> statements = Split(new_description, '\n');
-  for (std::string statement : statements) {
+  for (const std::string& statement : statements) {
     std::vector<std::string> parts = Split(statement, ' ');
 
     if (parts.empty()) {
