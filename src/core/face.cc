@@ -12,6 +12,7 @@
 #include "CGAL/Triangulation_vertex_base_with_info_3.h"
 
 namespace mesh {
+namespace {
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Delaunay = CGAL::Delaunay_triangulation_3<
   Kernel,
@@ -22,6 +23,7 @@ using Delaunay = CGAL::Delaunay_triangulation_3<
   CGAL::Fast_location
 >;
 using Point_3 = Kernel::Point_3;
+}  // namespace
 
 Face::Face(std::vector<std::size_t> vertices) {
   this->vertices_ = vertices;

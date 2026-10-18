@@ -5,9 +5,6 @@
 #include <utility>
 #include <vector>
 
-#include "CGAL/Exact_predicates_inexact_constructions_kernel.h"
-#include "CGAL/Point_3.h"
-
 namespace mesh {
 class Face {
   public:
