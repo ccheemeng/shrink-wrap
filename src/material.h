@@ -1,5 +1,5 @@
-#ifndef SHRINK_WRAP_CORE_MATERIAL_H_
-#define SHRINK_WRAP_CORE_MATERIAL_H_
+#ifndef SHRINK_WRAP_MATERIAL_H_
+#define SHRINK_WRAP_MATERIAL_H_
 
 #include <array>
 #include <string>
@@ -33,4 +33,4 @@ class Material {
 };
 }  // namespace mesh
 
-#endif  // SHRINK_WRAP_CORE_MATERIAL_H_
+#endif  // SHRINK_WRAP_MATERIAL_H_

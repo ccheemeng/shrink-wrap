@@ -1,5 +1,5 @@
-#ifndef SHRINK_WRAP_CORE_FACE_H_
-#define SHRINK_WRAP_CORE_FACE_H_
+#ifndef SHRINK_WRAP_FACE_H_
+#define SHRINK_WRAP_FACE_H_
 
 #include <optional>
 #include <utility>
@@ -45,4 +45,4 @@ class Face {
 };
 }
 
-#endif  // SHIRNK_WRAP_CORE_FACE_H_
+#endif  // SHRINK_WRAP_FACE_H_

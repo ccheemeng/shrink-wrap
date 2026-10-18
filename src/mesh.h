@@ -1,12 +1,12 @@
-#ifndef SHRINK_WRAP_CORE_MESH_H_
-#define SHRINK_WRAP_CORE_MESH_H_
+#ifndef SHRINK_WRAP_MESH_H_
+#define SHRINK_WRAP_MESH_H_
 
 #include <array>
 #include <optional>
 #include <string>
 
-#include "core/face.h"
-#include "core/material.h"
+#include "face.h"
+#include "material.h"
 
 namespace mesh {
 class Mesh {
@@ -36,4 +36,4 @@ class Mesh {
 };
 }  // namespace mesh
 
-#endif  // SHRINK_WRAP_CORE_MESH_H_
+#endif  // SHRINK_WRAP_MESH_H_

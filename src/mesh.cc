@@ -1,12 +1,12 @@
-#include "core/mesh.h"
+#include "mesh.h"
 
 #include <array>
 #include <optional>
 #include <utility>
 #include <vector>
 
-#include "core/face.h"
-#include "core/material.h"
+#include "face.h"
+#include "material.h"
 
 namespace mesh {
 Mesh::Mesh(

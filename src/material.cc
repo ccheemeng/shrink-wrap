@@ -1,66 +1,12 @@
-#include "core/material.h"
+#include "material.h"
 
-#include <exception>
-#include <functional>
 #include <optional>
-#include <sstream>
 #include <string>
 #include <vector>
 
+#include "utils.h"
+
 namespace mesh {
-namespace {
-  float StringToFloat(const std::string& s) {
-    return std::stof(s);
-  }
-
-  int StringToInt(const std::string& s) {
-    return std::stoi(s);
-  }
-
-  std::vector<std::string> Split(
-    const std::string& str, const char& delimiter
-  ) {
-    std::stringstream stream = std::stringstream(str);
-    std::vector<std::string> parts;
-    std::string part;
-    while (std::getline(stream, part, delimiter)) {
-      if (part.length() > 0) {
-        parts.push_back(part);
-      }
-    }
-    return parts;
-  }
-
-  template <typename T, typename U>
-  std::optional<U> TryCast(
-    const std::function<U(const T&)>& cast, const T& value
-  ) {
-    try {
-      return std::optional<U>(cast(value));
-    } catch (const std::exception&) {
-      return std::optional<U>();
-    }
-  }
-
-  std::optional<std::array<float, 3>> StringsToArrayFloat3(
-    const std::string& a, const std::string& b, const std::string& c
-  ) {
-    return TryCast<std::string, float>(StringToFloat, a)
-      .and_then([b](float x) {
-        return TryCast<std::string, float>(StringToFloat, b)
-          .transform([x](float y) {
-            return std::array<float, 2>({x, y});
-          });
-      })
-      .and_then([c](std::array<float, 2> xy) {
-        return TryCast<std::string, float>(StringToFloat, c)
-          .transform([xy](float z) {
-            return std::array<float, 3>({xy[0], xy[1], z});
-          });
-      });
-  }
-}  // namespace
-
 Material Material::FromDescription(const std::string& description) {
   Material material;
 
@@ -69,9 +15,9 @@ Material Material::FromDescription(const std::string& description) {
     std::remove(new_description.begin(), new_description.end(), '\r')
   );
 
-  std::vector<std::string> statements = Split(new_description, '\n');
+  std::vector<std::string> statements = utils::Split(new_description, '\n');
   for (const std::string& statement : statements) {
-    std::vector<std::string> parts = Split(statement, ' ');
+    std::vector<std::string> parts = utils::Split(statement, ' ');
 
     if (parts.empty()) {
       continue;
@@ -86,48 +32,48 @@ Material Material::FromDescription(const std::string& description) {
       if (parts.size() < 4) {
         break;
       }
-      material.ambient_ = StringsToArrayFloat3(
+      material.ambient_ = utils::StringsToArrayFloat3(
         parts[1], parts[2], parts[3]
       );
     } else if (parts[0] == "Kd") {
       if (parts.size() < 4) {
         break;
       }
-      material.diffuse_ = StringsToArrayFloat3(
+      material.diffuse_ = utils::StringsToArrayFloat3(
         parts[1], parts[2], parts[3]
       );
     } else if (parts[0] == "Ks") {
       if (parts.size() < 4) {
         break;
       }
-      material.specular_ = StringsToArrayFloat3(
+      material.specular_ = utils::StringsToArrayFloat3(
         parts[1], parts[2], parts[3]
       );
     } else if (parts[0] == "Tf") {
       if (parts.size() < 4) {
         break;
       }
-      material.transmission_ = StringsToArrayFloat3(
+      material.transmission_ = utils::StringsToArrayFloat3(
         parts[1], parts[2], parts[3]
       );
     } else if (parts[0] == "illum") {
       if (parts.size() < 2) {
         break;
       }
-      material.illumination_ = TryCast<std::string, int>(
-        StringToInt, parts[1]
+      material.illumination_ = utils::TryCast<std::string, int>(
+        utils::StringToInt, parts[1]
       );
     } else if (parts[0] == "d") {
       if (parts.size() == 2) {
-        material.dissolve_ = TryCast<std::string, float>(
-          StringToFloat, parts[1]
+        material.dissolve_ = utils::TryCast<std::string, float>(
+          utils::StringToFloat, parts[1]
         )
           .transform([](float dissolve) {
             return internal::Dissolve({false, dissolve});
           });
       } else if (parts.size() > 2 && parts[1] == "-halo") {
-        material.dissolve_ = TryCast<std::string, float>(
-          StringToFloat, parts[2]
+        material.dissolve_ = utils::TryCast<std::string, float>(
+          utils::StringToFloat, parts[2]
         )
           .transform([](float dissolve) {
             return internal::Dissolve({true, dissolve});
@@ -137,22 +83,22 @@ Material Material::FromDescription(const std::string& description) {
       if (parts.size() < 2) {
         break;
       }
-      material.specular_exponent_ = TryCast<std::string, float>(
-        StringToFloat, parts[1]
+      material.specular_exponent_ = utils::TryCast<std::string, float>(
+        utils::StringToFloat, parts[1]
       );
     } else if (parts[0] == "sharpness") {
       if (parts.size() < 2) {
         break;
       }
-      material.sharpness_ = TryCast<std::string, float>(
-        StringToFloat, parts[1]
+      material.sharpness_ = utils::TryCast<std::string, float>(
+        utils::StringToFloat, parts[1]
       );
     } else if (parts[0] == "Ni") {
       if (parts.size() < 2) {
         break;
       }
-      material.optical_density_ = TryCast<std::string, float>(
-        StringToFloat, parts[1]
+      material.optical_density_ = utils::TryCast<std::string, float>(
+        utils::StringToFloat, parts[1]
       );
     }
   }

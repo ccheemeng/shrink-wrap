@@ -6,6 +6,8 @@
 #include "CGAL/Exact_predicates_inexact_constructions_kernel.h"
 #include "CGAL/Surface_mesh.h"
 
+#include "core/face.h"
+#include "core/material.h"
 #include "core/mesh.h"
 
 namespace shrink_wrap {
@@ -35,9 +37,8 @@ std::vector<std::vector<std::size_t>> ToBareFaces(
   }
   return output_faces;
 }
-}  // namespace
 
-mesh::Mesh ShrinkWrap(
+mesh::Mesh ShrinkWrapMesh(
   const mesh::Mesh& mesh, const double& alpha, const double& offset
 ) {
   mesh::Mesh triangle_mesh = mesh.Triangulate();
@@ -87,5 +88,12 @@ mesh::Mesh ShrinkWrap(
   mesh::Mesh output_mesh = mesh.SetVerticesFaces(output_vertices, output_faces);
 
   return output_mesh;
+}
+}  // namespace
+
+bool ShrinkWrap::ShrinkWrap(
+  const std::string& input, const std::string& output
+) {
+  mesh::Mesh input_mesh =
 }
 }  // namespace shrink_wrap
