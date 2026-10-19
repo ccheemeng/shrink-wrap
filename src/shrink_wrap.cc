@@ -1,4 +1,4 @@
-#include "core/shrink_wrap.h"
+#include "shrink_wrap/shrink_wrap.h"
 
 #include <vector>
 
@@ -6,9 +6,10 @@
 #include "CGAL/Exact_predicates_inexact_constructions_kernel.h"
 #include "CGAL/Surface_mesh.h"
 
-#include "core/face.h"
-#include "core/material.h"
-#include "core/mesh.h"
+#include "face.h"
+#include "io.h"
+#include "material.h"
+#include "mesh.h"
 
 namespace shrink_wrap {
 namespace {
@@ -38,7 +39,7 @@ std::vector<std::vector<std::size_t>> ToBareFaces(
   return output_faces;
 }
 
-mesh::Mesh ShrinkWrapMesh(
+mesh::Mesh Run(
   const mesh::Mesh& mesh, const double& alpha, const double& offset
 ) {
   mesh::Mesh triangle_mesh = mesh.Triangulate();
@@ -76,6 +77,7 @@ mesh::Mesh ShrinkWrapMesh(
         return wrap_face.SetMaterial(material);
       })
       .value_or(wrap_face);
+    output_faces.push_back(output_face);
   }
 
   std::vector<std::array<double, 3>> output_vertices;
@@ -91,9 +93,21 @@ mesh::Mesh ShrinkWrapMesh(
 }
 }  // namespace
 
-bool ShrinkWrap::ShrinkWrap(
-  const std::string& input, const std::string& output
+bool ShrinkWrapper::ShrinkWrap(
+  const std::string& input,
+  const std::string& output,
+  const double& alpha,
+  const double& offset
 ) {
-  mesh::Mesh input_mesh =
+  if (!io::IoObj::IsWritable(output)) {
+    return false;
+  }
+  std::cout << "Started" << std::endl;
+  mesh::Mesh input_mesh = io::IoObj::ReadDirectory(input);
+  std::cout << "Read " << input_mesh.ToString() << std::endl;
+  mesh::Mesh output_mesh = Run(input_mesh, alpha, offset);
+  std::cout << "Wrapped " << input_mesh.ToString() << " as " << output_mesh.ToString() << std::endl;
+  return io::IoObj::Write(output_mesh, output);
+  std::cout << "Written" << std::endl;
 }
 }  // namespace shrink_wrap

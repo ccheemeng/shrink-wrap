@@ -1,6 +1,10 @@
 *.mtl
 *.obj
-!KPF Robinson Tower wrap.mtl
-!KPF Robinson Tower wrap.obj
-!Tembusu L12 wrap.mtl
-!Tembusu L12 wrap.obj
+!KPF\ Robinson\ Tower\ wrap.mtl
+!KPF\ Robinson\ Tower\ wrap.obj
+!teapot.mtl
+!teapot.obj
+!Tembusu\ L12\ wrap.mtl
+!Tembusu\ L12\ wrap.obj
+!Tembusu\ L12.mtl
+!Tembusu\ L12.obj

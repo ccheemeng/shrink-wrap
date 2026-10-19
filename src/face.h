@@ -5,6 +5,7 @@
 #include <utility>
 #include <vector>
 
+namespace shrink_wrap{
 namespace mesh {
 class Face {
   public:
@@ -43,6 +44,7 @@ class Face {
     std::optional<int> material_;
     std::optional<std::pair<std::size_t, std::size_t>> vertex_minmax_;
 };
-}
+}  // namespace mesh
+}  // namespace shrink_wrap
 
 #endif  // SHRINK_WRAP_FACE_H_

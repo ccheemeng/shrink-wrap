@@ -4,10 +4,15 @@
 #include <string>
 
 namespace shrink_wrap {
-class ShrinkWrap {
+class ShrinkWrapper {
   public:
-    static bool ShrinkWrap(const std::string& input, const std::string& output);
-}
+    static bool ShrinkWrap(
+      const std::string& input,
+      const std::string& output,
+      const double& alpha,
+      const double& offset
+    );
+};
 }  // namespace shrink_wrap
 
 #endif  // SHRINK_WRAP_SHRINK_WRAP_H_

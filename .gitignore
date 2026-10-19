@@ -1,8 +1,6 @@
 *.mtl
 *.obj
 build/*
-build-linux/*
-build-windows/*
 .vscode
 
 # Prerequisites

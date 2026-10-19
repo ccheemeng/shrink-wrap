@@ -8,6 +8,7 @@
 #include "face.h"
 #include "material.h"
 
+namespace shrink_wrap {
 namespace mesh {
 Mesh::Mesh(
   std::vector<std::array<double, 3>> vertices, std::vector<Face> faces
@@ -67,6 +68,14 @@ Mesh Mesh::SetVerticesFaces(
   return Mesh(vertices, faces, this->materials_);
 }
 
+std::string Mesh::ToString() const {
+  return "Mesh(v"
+    + std::to_string(this->GetVertices().size())
+    + ", f" + std::to_string(this->GetFaces().size()) 
+    + ", mtl" + std::to_string(this->GetMaterials().size())
+    + ")";
+}
+
 bool Mesh::Valid() const {
   return this->GetVertices().empty();
 }
@@ -91,3 +100,4 @@ Mesh Mesh::Triangulate() const {
   return Mesh(this->GetVertices(), triangles, this->GetMaterials());
 }
 }  // namespace mesh
+}  // namespace shrink_wrap

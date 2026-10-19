@@ -15,6 +15,7 @@
 #include "CGAL/Point_3.h"
 #include "CGAL/Triangulation_vertex_base_with_info_3.h"
 
+namespace shrink_wrap {
 namespace mesh {
 namespace {
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
@@ -204,3 +205,4 @@ std::vector<Face> Face::Triangulate(
   return faces;
 }
 }  // namespace mesh
+}  // namespace shrink_wrap

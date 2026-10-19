@@ -1,18 +1,21 @@
 #include "material.h"
 
+#include <algorithm>
 #include <optional>
 #include <string>
 #include <vector>
 
 #include "utils.h"
 
+namespace shrink_wrap {
 namespace mesh {
-Material Material::FromDescription(const std::string& description) {
+Material Material::FromString(const std::string& description) {
   Material material;
 
   std::string new_description = description;
   new_description.erase(
-    std::remove(new_description.begin(), new_description.end(), '\r')
+    std::remove(new_description.begin(), new_description.end(), '\r'),
+    new_description.end()
   );
 
   std::vector<std::string> statements = utils::Split(new_description, '\n');
@@ -32,28 +35,28 @@ Material Material::FromDescription(const std::string& description) {
       if (parts.size() < 4) {
         break;
       }
-      material.ambient_ = utils::StringsToArrayFloat3(
+      material.ambient_ = utils::StringsToArrayDouble3(
         parts[1], parts[2], parts[3]
       );
     } else if (parts[0] == "Kd") {
       if (parts.size() < 4) {
         break;
       }
-      material.diffuse_ = utils::StringsToArrayFloat3(
+      material.diffuse_ = utils::StringsToArrayDouble3(
         parts[1], parts[2], parts[3]
       );
     } else if (parts[0] == "Ks") {
       if (parts.size() < 4) {
         break;
       }
-      material.specular_ = utils::StringsToArrayFloat3(
+      material.specular_ = utils::StringsToArrayDouble3(
         parts[1], parts[2], parts[3]
       );
     } else if (parts[0] == "Tf") {
       if (parts.size() < 4) {
         break;
       }
-      material.transmission_ = utils::StringsToArrayFloat3(
+      material.transmission_ = utils::StringsToArrayDouble3(
         parts[1], parts[2], parts[3]
       );
     } else if (parts[0] == "illum") {
@@ -65,17 +68,17 @@ Material Material::FromDescription(const std::string& description) {
       );
     } else if (parts[0] == "d") {
       if (parts.size() == 2) {
-        material.dissolve_ = utils::TryCast<std::string, float>(
-          utils::StringToFloat, parts[1]
+        material.dissolve_ = utils::TryCast<std::string, double>(
+          utils::StringToDouble, parts[1]
         )
-          .transform([](float dissolve) {
+          .transform([](double dissolve) {
             return internal::Dissolve({false, dissolve});
           });
       } else if (parts.size() > 2 && parts[1] == "-halo") {
-        material.dissolve_ = utils::TryCast<std::string, float>(
-          utils::StringToFloat, parts[2]
+        material.dissolve_ = utils::TryCast<std::string, double>(
+          utils::StringToDouble, parts[2]
         )
-          .transform([](float dissolve) {
+          .transform([](double dissolve) {
             return internal::Dissolve({true, dissolve});
           });
       }
@@ -83,22 +86,22 @@ Material Material::FromDescription(const std::string& description) {
       if (parts.size() < 2) {
         break;
       }
-      material.specular_exponent_ = utils::TryCast<std::string, float>(
-        utils::StringToFloat, parts[1]
+      material.specular_exponent_ = utils::TryCast<std::string, double>(
+        utils::StringToDouble, parts[1]
       );
     } else if (parts[0] == "sharpness") {
       if (parts.size() < 2) {
         break;
       }
-      material.sharpness_ = utils::TryCast<std::string, float>(
-        utils::StringToFloat, parts[1]
+      material.sharpness_ = utils::TryCast<std::string, double>(
+        utils::StringToDouble, parts[1]
       );
     } else if (parts[0] == "Ni") {
       if (parts.size() < 2) {
         break;
       }
-      material.optical_density_ = utils::TryCast<std::string, float>(
-        utils::StringToFloat, parts[1]
+      material.optical_density_ = utils::TryCast<std::string, double>(
+        utils::StringToDouble, parts[1]
       );
     }
   }
@@ -106,38 +109,38 @@ Material Material::FromDescription(const std::string& description) {
   return material;
 }
 
-std::string Material::ToDescription() const {
+std::string Material::ToString() const {
   return "newmtl " + this->name_
     + this->ambient_
-      .transform([](std::array<float, 3> rgb) {
-        return "\nKa"
-          + ' ' + std::to_string(rgb[0])
-          + ' ' + std::to_string(rgb[1])
-          + ' ' + std::to_string(rgb[2]);
+      .transform([](std::array<double, 3> rgb) {
+        return "\nKa "
+          + std::to_string(rgb[0]) + " "
+          + std::to_string(rgb[1]) + " "
+          + std::to_string(rgb[2]);
       })
       .value_or("")
     + this->diffuse_
-      .transform([](std::array<float, 3> rgb) {
-        return "\nKd"
-          + ' ' + std::to_string(rgb[0])
-          + ' ' + std::to_string(rgb[1])
-          + ' ' + std::to_string(rgb[2]);
+      .transform([](std::array<double, 3> rgb) {
+        return "\nKd "
+          + std::to_string(rgb[0]) + " "
+          + std::to_string(rgb[1]) + " "
+          + std::to_string(rgb[2]);
       })
       .value_or("")
     + this->specular_
-      .transform([](std::array<float, 3> rgb) {
-        return "\nKs"
-          + ' ' + std::to_string(rgb[0])
-          + ' ' + std::to_string(rgb[1])
-          + ' ' + std::to_string(rgb[2]);
+      .transform([](std::array<double, 3> rgb) {
+        return "\nKs "
+          + std::to_string(rgb[0]) + " "
+          + std::to_string(rgb[1]) + " "
+          + std::to_string(rgb[2]);
       })
       .value_or("")
     + this->transmission_
-      .transform([](std::array<float, 3> rgb) {
-        return "\nTf"
-          + ' ' + std::to_string(rgb[0])
-          + ' ' + std::to_string(rgb[1])
-          + ' ' + std::to_string(rgb[2]);
+      .transform([](std::array<double, 3> rgb) {
+        return "\nTf "
+          + std::to_string(rgb[0]) + " "
+          + std::to_string(rgb[1]) + " "
+          + std::to_string(rgb[2]);
       })
       .value_or("")
     + this->illumination_
@@ -145,19 +148,24 @@ std::string Material::ToDescription() const {
       .value_or("")
     + this->dissolve_
       .transform([](internal::Dissolve d) {
-        return "\nd"
-         + d.halo ? " -halo" : ""
-         + ' ' + std::to_string(d.dissolve);
+        return "\nd "
+          + std::string(d.halo ? "-halo " : "")
+          + std::to_string(d.dissolve);
       })
       .value_or("")
     + this->specular_exponent_
-      .transform([](float x) { return "\nNs " + std::to_string(x); })
+      .transform([](double x) { return "\nNs " + std::to_string(x); })
       .value_or("")
     + this->sharpness_
-      .transform([](float x) { return "\nsharpness " + std::to_string(x); })
+      .transform([](double x) { return "\nsharpness " + std::to_string(x); })
       .value_or("")
     + this->optical_density_
-      .transform([](float x) { return "\nNi " + std::to_string(x); })
+      .transform([](double x) { return "\nNi " + std::to_string(x); })
       .value_or("");
 }
+
+std::string Material::GetName() const {
+  return this->name_;
+}
 }  // namespace mesh
+}  // namespace shrink_wrap

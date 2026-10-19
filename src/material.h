@@ -5,32 +5,36 @@
 #include <string>
 #include <optional>
 
+namespace shrink_wrap {
 namespace mesh {
 namespace internal {
 struct Dissolve {
   bool halo;
-  float dissolve;
+  double dissolve;
 };
 }  // namespace internal
 
 class Material {
   public:
-    static Material FromDescription(const std::string& description);
-    std::string ToDescription() const;
+    static Material FromString(const std::string& description);
+    std::string ToString() const;
+
+    std::string GetName() const;
 
   private:
     std::string name_;
 
-    std::optional<std::array<float, 3>> ambient_;
-    std::optional<std::array<float, 3>> diffuse_;
-    std::optional<std::array<float, 3>> specular_;
-    std::optional<std::array<float, 3>> transmission_;
+    std::optional<std::array<double, 3>> ambient_;
+    std::optional<std::array<double, 3>> diffuse_;
+    std::optional<std::array<double, 3>> specular_;
+    std::optional<std::array<double, 3>> transmission_;
     std::optional<int> illumination_;
     std::optional<internal::Dissolve> dissolve_;
-    std::optional<float> specular_exponent_;
-    std::optional<float> sharpness_;
-    std::optional<float> optical_density_;
+    std::optional<double> specular_exponent_;
+    std::optional<double> sharpness_;
+    std::optional<double> optical_density_;
 };
 }  // namespace mesh
+}  // namespace shrink_wrap
 
 #endif  // SHRINK_WRAP_MATERIAL_H_

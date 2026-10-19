@@ -7,9 +7,10 @@
 #include <string>
 #include <vector>
 
+namespace shrink_wrap {
 namespace utils {
-float StringToFloat(const std::string& s) {
-  return std::stof(s);
+double StringToDouble(const std::string& s) {
+  return std::stod(s);
 }
 
 int StringToInt(const std::string& s) {
@@ -32,32 +33,22 @@ std::vector<std::string> Split(const std::string& str, const char& delimiter) {
   return parts;
 }
 
-template <typename T, typename U>
-std::optional<U> TryCast(
-  const std::function<U(const T&)>& cast, const T& value
-) {
-  try {
-      return std::optional<U>(cast(value));
-  } catch (const std::exception&) {
-      return std::optional<U>();
-  }
-}
-
-std::optional<std::array<float, 3>> StringsToArrayFloat3(
+std::optional<std::array<double, 3>> StringsToArrayDouble3(
   const std::string& a, const std::string& b, const std::string& c
 ) {
-  return utils::TryCast<std::string, float>(StringToFloat, a)
-    .and_then([b](float x) {
-      return utils::TryCast<std::string, float>(StringToFloat, b)
-        .transform([x](float y) {
-          return std::array<float, 2>({x, y});
+  return utils::TryCast<std::string, double>(StringToDouble, a)
+    .and_then([b](double x) {
+      return utils::TryCast<std::string, double>(StringToDouble, b)
+        .transform([x](double y) {
+          return std::array<double, 2>({x, y});
         });
     })
-    .and_then([c](std::array<float, 2> xy) {
-      return utils::TryCast<std::string, float>(StringToFloat, c)
-        .transform([xy](float z) {
-          return std::array<float, 3>({xy[0], xy[1], z});
+    .and_then([c](std::array<double, 2> xy) {
+      return utils::TryCast<std::string, double>(StringToDouble, c)
+        .transform([xy](double z) {
+          return std::array<double, 3>({xy[0], xy[1], z});
         });
     });
 }
 }  // namespace utils
+}  // namespace shrink_wrap
