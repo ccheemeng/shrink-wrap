@@ -1,14 +1,13 @@
 #include "io.h"
 
-#include <iostream>
 #include <filesystem>
 #include <fstream>
-#include <map>
 #include <numeric>
 #include <ranges>
 #include <set>
 #include <string>
 #include <tuple>
+#include <unordered_map>
 
 #include "face.h"
 #include "material.h"
@@ -18,113 +17,6 @@
 namespace shrink_wrap {
 namespace io {
 namespace {
-std::tuple<
-  std::vector<std::array<double, 3>>,
-  std::map<std::string, std::vector<std::vector<size_t>>>,
-  std::set<std::string>
-> ReadObj(std::filesystem::path obj_file) {
-  std::vector<std::array<double, 3>> vertices;
-  std::map<std::string, std::vector<std::vector<size_t>>> material_face_map;
-  std::set<std::string> material_files;
-  if (
-    !std::filesystem::is_regular_file(obj_file) || obj_file.extension() != ".obj"
-  ) {
-    return std::tuple<
-      std::vector<std::array<double, 3>>,
-      std::map<std::string, std::vector<std::vector<size_t>>>,
-      std::set<std::string>
-    >(vertices, material_face_map, material_files);
-  }
-
-  std::filesystem::path parent_directory = obj_file.parent_path();
-  std::ifstream file_stream = std::ifstream(obj_file);
-  std::string material_name = "";
-  std::string line;
-  while (std::getline(file_stream, line)) {
-    line.erase(std::remove(line.begin(), line.end(), '\n'), line.end());
-    line.erase(std::remove(line.begin(), line.end(), '\r'), line.end());
-    std::vector<std::string> parts = utils::Split(line, ' ');
-
-    if (parts.empty()) {
-      continue;
-    }
-
-    if (parts[0] == "v") {
-      if (parts.size() < 4) {
-        continue;
-      }
-      std::optional<std::array<double, 3>> vertex_optional
-        = utils::StringsToArrayDouble3(parts[1], parts[2], parts[3]);
-      vertex_optional.transform(
-        [&vertices](const std::array<double, 3>& vertex) {
-          vertices.push_back(vertex);
-          return vertex;
-        }
-      );
-    } else if (parts[0] == "f") {
-      if (parts.size() < 4) {
-        continue;
-      }
-
-      std::vector<size_t> face;
-      face.reserve(parts.size() - 1);
-      for (int i = 1; i < parts.size(); ++i) {
-        std::vector<std::string> indices = utils::Split(parts[i], '/');
-        if (indices.empty()) {
-          continue;
-        }
-        face.push_back(utils::StringToUnsignedLongLong(indices[0]) - 1);
-      }
-      if (!material_face_map.contains(material_name)) {
-        material_face_map.insert(
-          {material_name, std::vector<std::vector<size_t>>()}
-        );
-      }
-      material_face_map[material_name].push_back(face);
-    } else if (parts[0] == "usemtl") {
-      if (parts.size() < 2) {
-        material_name = "";
-        continue;
-      }
-      material_name = std::accumulate(
-        parts.cbegin() + 2,
-        parts.cend(),
-        parts[1],
-        [](std::string first, std::string second) {
-          return first + " " + second;
-        }
-      );
-    } else if (parts[0] == "mtllib") {
-      if (parts.size() < 2) {
-        continue;
-      }
-      std::string material_file = std::accumulate(
-        parts.cbegin() + 2,
-        parts.cend(),
-        parts[1],
-        [](std::string first, std::string second) {
-          return first + " " + second;
-        }
-      );
-      std::filesystem::path material_path = std::filesystem::path(
-        material_file
-      );
-      if (material_path.is_absolute()) {
-        material_files.insert(material_file);
-      } else {
-        material_files.insert(parent_directory / material_path);
-      }
-    }
-  }
-  file_stream.close();
-
-  return std::tuple<
-    std::vector<std::array<double, 3>>,
-    std::map<std::string, std::vector<std::vector<size_t>>>,
-    std::set<std::string>
-  >(vertices, material_face_map, material_files);
-}
-
 std::vector<std::string> ReadMtl(std::filesystem::path mtl_file) {
   std::vector<std::string> materials;
   if (
@@ -144,12 +36,18 @@ std::vector<std::string> ReadMtl(std::filesystem::path mtl_file) {
     if (parts.empty()) {
       continue;
     }
-    if (parts[0] == "newmtl" && !material.empty()) {
+    if (parts[0] == "newmtl") {
+      if (!(material.empty())) {
         if (material.back() == '\n') {
           material.pop_back();
         }
         materials.push_back(material);
         material = "";
+      }
+    } else {
+      if (material.empty()) {
+        continue;
+      }
     }
     material += line + '\n';
   }
@@ -164,7 +62,7 @@ std::vector<std::string> ReadMtl(std::filesystem::path mtl_file) {
 }
 
 std::string WriteMaterialFaces(
-  std::map<std::string, std::vector<std::vector<size_t>>> material_face_map,
+  std::unordered_map<std::string, std::vector<std::vector<size_t>>> material_face_map,
   std::string material_name
 ) {
   std::string lines = "";
@@ -191,102 +89,144 @@ mesh::Mesh IoObj::ReadDirectory(const std::string& directory) {
     return mesh::Mesh();
   }
 
-  std::vector<std::array<double, 3>> vertices;
-  std::vector<mesh::Face> faces;
-
-  std::map<std::string, int> material_names;  // ordered (indexed) set
   std::set<std::string> material_files;
-  int material_index = 0;
-
   for (
     const std::filesystem::directory_entry& entry
       : std::filesystem::directory_iterator(directory_path)
   ) {
-    if (!entry.is_regular_file()) {
-      continue;
-    }
-    std::string extension = entry.path().extension().string();
-    if (extension == ".obj") {
-      std::tuple<
-        std::vector<std::array<double, 3>>,
-        std::map<std::string, std::vector<std::vector<size_t>>>,
-        std::set<std::string>
-      > read_obj = ReadObj(entry.path());
-      std::vector<std::array<double, 3>> obj_vertices = std::get<0>(read_obj);
-      std::map<
-        std::string, std::vector<std::vector<size_t>>
-      > obj_material_face_map = std::get<1>(read_obj);
-      std::set<std::string> obj_material_files = std::get<2>(read_obj);
-
-      vertices.reserve(vertices.size() + obj_vertices.size());
-      for (std::array<double, 3> obj_vertex : obj_vertices) {
-        vertices.push_back(obj_vertex);
-      }
-
-      for (
-        std::string material_name : std::views::keys(obj_material_face_map)
-      ) {
-        bool has_name = material_name != "";
-        bool in_map = material_names.contains(material_name);
-        std::vector<std::vector<size_t>> material_faces
-          = obj_material_face_map[material_name];
-
-        faces.reserve(faces.size() + material_faces.size());
-        for (std::vector<size_t> material_face : material_faces) {
-          mesh::Face face = mesh::Face(material_face);
-          if (has_name) {  // check condition in loop for readability
-            int face_material_index = material_index;
-            if (in_map) {
-              face_material_index = material_names[material_name];
-            }
-            face = face.SetMaterial(face_material_index);
-          }
-          faces.push_back(face);
-        }
-
-        if (has_name && !in_map) {
-          material_names[material_name] = material_index;
-          ++material_index;
-        }
-      }
-
-      for (std::string obj_material_file : obj_material_files) {
-        material_files.insert(obj_material_file);
-      }
-    } else if (extension == ".mtl") {
-      material_files.insert(entry.path().string());
-    }
-  }
-
-  std::vector<mesh::Material> materials = std::vector<mesh::Material>(
-    material_names.size(), mesh::Material::FromString("")
-  );
-  for (std::string material_name : std::views::keys(material_names)) {
-    materials[material_names[material_name]] = mesh::Material::FromString(
-      "newmtl " + material_name
-    );
-  }
-  for (std::string material_file : material_files) {
-    std::filesystem::path material_path = std::filesystem::path(
-      material_file
-    );
     if (
-      !std::filesystem::is_regular_file(material_path)
-        || material_path.extension() != ".mtl"
+      !entry.is_regular_file()
+        || (entry.path().extension().string() != ".obj")
     ) {
       continue;
     }
-    std::vector<std::string> material_descriptions = ReadMtl(material_path);
-    for (std::string material_description : material_descriptions) {
-      mesh::Material material = mesh::Material::FromString(
-        material_description
-      );
-      std::string material_name = material.GetName();
-      if (!material_names.contains(material_name)) {
+
+    std::filesystem::path parent_directory = entry.path().parent_path();
+    std::ifstream file_stream = std::ifstream(entry.path());
+    std::string line;
+    while (std::getline(file_stream, line)) {
+      line.erase(std::remove(line.begin(), line.end(), '\n'), line.end());
+      line.erase(std::remove(line.begin(), line.end(), '\r'), line.end());
+      std::vector<std::string> parts = utils::Split(line, ' ');
+
+      if (parts.empty()) {
         continue;
       }
-      materials[material_names[material_name]] = material;
+
+      if (parts[0] == "mtllib") {
+        if (parts.size() < 2) {
+          continue;
+        }
+        std::string material_file = std::accumulate(
+          parts.cbegin() + 2,
+          parts.cend(),
+          parts[1],
+          [](std::string first, std::string second) {
+            return first + " " + second;
+          }
+        );
+        std::filesystem::path material_path = std::filesystem::path(
+          material_file
+        );
+        if (material_path.is_absolute()) {
+          material_files.insert(material_file);
+        } else {
+          material_files.insert((parent_directory / material_path).string());
+        }
+      }
     }
+    file_stream.close();
+  }
+
+  int material_index = 0;
+  std::unordered_map<std::string, int> material_names;
+  std::vector<mesh::Material> materials;
+  for (std::string material_file : material_files) {
+    std::vector<std::string> material_descriptions = ReadMtl(material_file);
+    materials.reserve(materials.size() + material_descriptions.size());
+    for (std::string material_description : material_descriptions) {
+      mesh::Material material
+        = mesh::Material::FromString(material_description);
+      if (material_names.contains(material.GetName())) {
+        continue;
+      }
+      materials.push_back(material);
+      material_names[material.GetName()] = material_index;
+      ++material_index;
+    }
+  }
+
+  std::vector<std::array<double, 3>> vertices;
+  std::vector<mesh::Face> faces;
+  for (
+    const std::filesystem::directory_entry& entry
+      : std::filesystem::directory_iterator(directory_path)
+  ) {
+    if (
+      !entry.is_regular_file()
+        || (entry.path().extension().string() != ".obj")
+    ) {
+      continue;
+    }
+
+    std::string material_name = "";
+    std::ifstream file_stream = std::ifstream(entry.path());
+    std::string line;
+    while (std::getline(file_stream, line)) {
+      line.erase(std::remove(line.begin(), line.end(), '\n'), line.end());
+      line.erase(std::remove(line.begin(), line.end(), '\r'), line.end());
+      std::vector<std::string> parts = utils::Split(line, ' ');
+
+      if (parts.empty()) {
+        continue;
+      }
+
+      if (parts[0] == "v") {
+        if (parts.size() < 4) {
+          continue;
+        }
+        std::optional<std::array<double, 3>> vertex_optional
+          = utils::StringsToArrayDouble3(parts[1], parts[2], parts[3]);
+        vertex_optional.transform(
+          [&vertices](const std::array<double, 3>& vertex) {
+            vertices.push_back(vertex);
+            return vertex;
+          }
+        );
+      } else if (parts[0] == "f") {
+        if (parts.size() < 4) {
+          continue;
+        }
+        std::vector<size_t> face_vertices;
+        face_vertices.reserve(parts.size() - 1);
+        for (int i = 1; i < parts.size(); ++i) {
+          std::vector<std::string> vs = utils::Split(parts[i], '/');
+          if (vs.empty()) {
+            continue;
+          }
+          face_vertices.push_back(utils::StringToUnsignedLongLong(vs[0]) - 1);
+        }
+        mesh::Face face = mesh::Face(face_vertices);
+        if (material_names.contains(material_name)) {
+          face = face.SetMaterial(material_names[material_name]);
+        }
+        faces.push_back(face);
+      } else if (parts[0] == "usemtl") {
+        if (parts.size() < 2) {
+          material_name = "";
+          continue;
+        }
+        material_name = std::accumulate(
+          parts.cbegin() + 2,
+          parts.cend(),
+          parts[1],
+          [](std::string first, std::string second) {
+            return first + " " + second;
+          }
+        );
+      }
+    }
+    file_stream.close();
   }
 
   return mesh::Mesh(vertices, faces, materials);
@@ -301,7 +241,7 @@ bool IoObj::Write(const mesh::Mesh& mesh, const std::string& target) {
   if (!IoObj::IsWritable(target)) {
     return false;
   }
-  
+
   std::filesystem::path target_path = std::filesystem::path(target);
   std::filesystem::path obj_path = target_path.replace_extension(".obj");
   std::filesystem::path mtl_path = target_path.replace_extension(".mtl");
@@ -319,7 +259,7 @@ bool IoObj::Write(const mesh::Mesh& mesh, const std::string& target) {
   }
 
   std::vector<mesh::Material> materials = mesh.GetMaterials();
-  std::map<std::string, std::vector<std::vector<size_t>>> material_face_map;
+  std::unordered_map<std::string, std::vector<std::vector<size_t>>> material_face_map;
   for (mesh::Face face : mesh.GetFaces()) {
     std::string material_name = face.GetMaterial()
       .transform([materials](int material) {
@@ -345,7 +285,6 @@ bool IoObj::Write(const mesh::Mesh& mesh, const std::string& target) {
 
   std::ofstream mtl_stream = std::ofstream(mtl_path);
   for (mesh::Material material : mesh.GetMaterials()) {
-    std::cout << material.ToString() << std::endl;
     mtl_stream << material.ToString() << '\n';
   }
   mtl_stream.close();

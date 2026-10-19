@@ -102,12 +102,8 @@ bool ShrinkWrapper::ShrinkWrap(
   if (!io::IoObj::IsWritable(output)) {
     return false;
   }
-  std::cout << "Started" << std::endl;
   mesh::Mesh input_mesh = io::IoObj::ReadDirectory(input);
-  std::cout << "Read " << input_mesh.ToString() << std::endl;
   mesh::Mesh output_mesh = Run(input_mesh, alpha, offset);
-  std::cout << "Wrapped " << input_mesh.ToString() << " as " << output_mesh.ToString() << std::endl;
   return io::IoObj::Write(output_mesh, output);
-  std::cout << "Written" << std::endl;
 }
 }  // namespace shrink_wrap

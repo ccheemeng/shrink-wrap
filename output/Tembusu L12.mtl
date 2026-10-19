@@ -1,24 +1,71 @@
-newmtl Concretensert0.470588 0.470588 0.470588 -halo
-newmtl Concrete_Masonry,_Floor_Blocknsert0.709804 0.709804 0.709804 -halo
-newmtl Door_-_Architravensert0.603922 0.352941 0.019608 -halo
-newmtl Door_-_Frame/Mullionnsert0.831373 0.701961 0.443137 -halo
-newmtl Door_-_Frame/Mullion_(1)nsert0.831373 0.701961 0.443137 -halo
-newmtl Door_-_Handlensert0.000000 0.000000 0.000000 -halo
-newmtl Door_-_Panelnsert0.823529 0.623529 0.372549 -halo
-newmtl Glassnsert0.000000 0.501961 0.752941 -halo
-newmtl MATERIAL_NOT_DEFINEDnsert1.000000 1.000000 1.000000
-newmtl Metal_-_Chromensert0.066667 0.066667 0.066667 -halo
-newmtl Metal_-_Steel,_Polishednsert0.223529 0.223529 0.223529 -halo
-newmtl Metal__-_WB_Pulls_-_Satin_Nickelnsert0.956863 0.956863 0.956863 -halo
-newmtl Oak_Flooringnsert0.831373 0.701961 0.443137 -halo
-newmtl Plasticnsert0.000000 0.000000 0.000000 -halo
-newmtl Plywood,_Finishnsert0.466667 0.372549 0.227451 -halo
-newmtl Porcelain,_Ivorynsert0.501961 1.000000 0.501961 -halo
-newmtl Porcelain_-_Linennsert0.976471 0.937255 0.901961 -halo
-newmtl Steel,_Polishednsert0.470588 0.470588 0.470588 -halo
-newmtl Table_Materialnsert0.600000 0.490196 0.298039 -halo
-newmtl Textile_-_Whitensert0.968627 0.968627 0.937255 -halo
-newmtl Wardrobe-Doornsert0.603922 0.486275 0.396078 -halo
-newmtl Wardrobe-Panelsnsert0.596078 0.474510 0.388235 -halo
-newmtl Window_Framensert0.976471 0.976471 0.976471 -halo
-newmtl Woodnsert0.831373 0.701961 0.443137 -halo
+newmtl Concrete
+Kd 0.470588 0.470588 0.470588
+d 1.000000
+newmtl Door_-_Handle
+Kd 0.000000 0.000000 0.000000
+d 1.000000
+newmtl Door_-_Panel
+Kd 0.823529 0.623529 0.372549
+d 1.000000
+newmtl Door_-_Architrave
+Kd 0.603922 0.352941 0.019608
+d 1.000000
+newmtl Door_-_Frame/Mullion_(1)
+Kd 0.831373 0.701961 0.443137
+d 1.000000
+newmtl Plastic
+Kd 0.000000 0.000000 0.000000
+d 1.000000
+newmtl Metal_-_Steel,_Polished
+Kd 0.223529 0.223529 0.223529
+d 1.000000
+newmtl Porcelain_-_Linen
+Kd 0.976471 0.937255 0.901961
+d 1.000000
+newmtl Door_-_Frame/Mullion
+Kd 0.831373 0.701961 0.443137
+d 1.000000
+newmtl Oak_Flooring
+Kd 0.831373 0.701961 0.443137
+d 1.000000
+newmtl Window_Frame
+Kd 0.976471 0.976471 0.976471
+d 1.000000
+newmtl Glass
+Kd 0.000000 0.501961 0.752941
+d 0.100000
+newmtl Concrete_Masonry,_Floor_Block
+Kd 0.709804 0.709804 0.709804
+d 1.000000
+newmtl Table_Material
+Kd 0.600000 0.490196 0.298039
+d 1.000000
+newmtl Metal__-_WB_Pulls_-_Satin_Nickel
+Kd 0.956863 0.956863 0.956863
+d 1.000000
+newmtl Wood
+Kd 0.831373 0.701961 0.443137
+d 1.000000
+newmtl Wardrobe-Panels
+Kd 0.596078 0.474510 0.388235
+d 1.000000
+newmtl Wardrobe-Door
+Kd 0.603922 0.486275 0.396078
+d 1.000000
+newmtl Plywood,_Finish
+Kd 0.466667 0.372549 0.227451
+d 1.000000
+newmtl Textile_-_White
+Kd 0.968627 0.968627 0.937255
+d 1.000000
+newmtl Metal_-_Chrome
+Kd 0.066667 0.066667 0.066667
+d 1.000000
+newmtl Steel,_Polished
+Kd 0.470588 0.470588 0.470588
+d 1.000000
+newmtl Porcelain,_Ivory
+Kd 0.501961 1.000000 0.501961
+d 1.000000
+newmtl MATERIAL_NOT_DEFINED
+Kd 1.000000 1.000000 1.000000
