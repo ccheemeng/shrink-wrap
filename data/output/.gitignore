@@ -1,0 +1,8 @@
+*.mtl
+*.obj
+!KPF\ Robinson\ Tower.mtl
+!KPF\ Robinson\ Tower.obj
+!teapot.mtl
+!teapot.obj
+!Tembusu\ L12.mtl
+!Tembusu\ L12.obj

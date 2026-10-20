@@ -74,7 +74,7 @@ mesh::Mesh Run(
   );
   std::vector<mesh::Face> output_faces;
   output_faces.reserve(wrap_faces.size());
-  for (std::size_t i; i < wrap_faces.size(); ++i) {
+  for (std::size_t i = 0; i < wrap_faces.size(); ++i) {
     mesh::Face wrap_face = wrap_faces[i];
     // Functionally transform the closest face to the output face based on its
     // optional material attribute.
