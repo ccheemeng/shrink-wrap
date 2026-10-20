@@ -42,18 +42,11 @@ using AABB_tree = CGAL::AABB_tree<
 }  // namespace
 
 std::vector<Face> Face::ClosestFaces(
-  const std::vector<Face>& source,
+  const std::vector<Face>& source_triangles,
   const std::vector<Face>& target,
-  const std::vector<std::array<double, 3>>& vertices
+  const std::vector<std::array<double, 3>>& source_vertices,
+  const std::vector<std::array<double, 3>>& target_vertices
 ) {
-  std::vector<Face> source_triangles;
-  source_triangles.reserve(source.size());
-  for (const Face& source_face : source) {
-    for (Face triangle : source_face.Triangulate(vertices)) {
-      source_triangles.push_back(triangle);
-    }
-  }
-
   std::vector<Triangle_3> triangles;
   triangles.reserve(source_triangles.size());
   for (const Face& triangle : source_triangles) {
@@ -61,7 +54,9 @@ std::vector<Face> Face::ClosestFaces(
     triangle_points.reserve(3);
     for (const std::size_t& i : triangle.GetVertices()) {
       triangle_points.push_back(
-        Point_3(vertices[i][0], vertices[i][1], vertices[i][2])
+        Point_3(
+          source_vertices[i][0], source_vertices[i][1], source_vertices[i][2]
+        )
       );
     }
     triangles.push_back(
@@ -74,7 +69,7 @@ std::vector<Face> Face::ClosestFaces(
   std::vector<Face> output_faces;
   output_faces.reserve(target.size());
   for (Face target_face : target) {
-    std::array<double, 3> barycentre = target_face.Barycentre(vertices);
+    std::array<double, 3> barycentre = target_face.Barycentre(target_vertices);
     Point_3 barycentre_point = Point_3(
       barycentre[0], barycentre[1], barycentre[2]
     );

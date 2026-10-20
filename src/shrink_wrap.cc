@@ -53,6 +53,13 @@ mesh::Mesh Run(
   Surface_mesh wrap;
   CGAL::alpha_wrap_3(points, faces, alpha, offset, wrap);
 
+  std::vector<std::array<double, 3>> output_vertices;
+  output_vertices.reserve(wrap.number_of_vertices());
+  for (Surface_mesh::Vertex_index vertex : wrap.vertices()) {
+    Point_3 point = wrap.point(vertex);
+    output_vertices.push_back({point.x(), point.y(), point.z()});
+  }
+
   std::vector<mesh::Face> wrap_faces;
   wrap_faces.reserve(wrap.number_of_faces());
   for (Surface_mesh::Face_index face : wrap.faces()) {
@@ -70,7 +77,7 @@ mesh::Mesh Run(
   // `closest_faces` is an ordered vector mapping each wrap's face to its
   // closest face in the source mesh.
   std::vector<mesh::Face> closest_faces = mesh::Face::ClosestFaces(
-    mesh.GetFaces(), wrap_faces, mesh.GetVertices()
+    mesh.GetFaces(), wrap_faces, mesh.GetVertices(), output_vertices
   );
   std::vector<mesh::Face> output_faces;
   output_faces.reserve(wrap_faces.size());
@@ -85,13 +92,6 @@ mesh::Mesh Run(
       })
       .value_or(wrap_face);
     output_faces.push_back(output_face);
-  }
-
-  std::vector<std::array<double, 3>> output_vertices;
-  output_vertices.reserve(wrap.number_of_vertices());
-  for (Surface_mesh::Vertex_index vertex : wrap.vertices()) {
-    Point_3 point = wrap.point(vertex);
-    output_vertices.push_back({point.x(), point.y(), point.z()});
   }
 
   mesh::Mesh output_mesh = mesh.SetVerticesFaces(output_vertices, output_faces);

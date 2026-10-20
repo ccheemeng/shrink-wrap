@@ -15,17 +15,22 @@ algorithms.
 */
 class Face {
   public:
-    /* Returns the closest Face `source` for each Face in `target`.
+    /* Returns the closest Face in `source_triangles` for each Face in `target`.
 
     Args:
-      source: Faces to query.
+      source: Triangle Faces to query. The behaviour of non-triangle Faces is
+        undefined.
       target: Faces to query with.
-      vertices: External sequence of vertices to materialise Faces in space.
+      source_vertices: External sequence of vertices to materialise Faces in
+        space.
+      target_vertices: External sequence of vertices to materialise Faces in
+        space.
     */
     static std::vector<Face> ClosestFaces(
-      const std::vector<Face>& source,
+      const std::vector<Face>& source_triangles,
       const std::vector<Face>& target,
-      const std::vector<std::array<double, 3>>& vertices
+      const std::vector<std::array<double, 3>>& source_vertices,
+      const std::vector<std::array<double, 3>>& target_vertices
     );
 
     Face(std::vector<std::size_t> vertices);
