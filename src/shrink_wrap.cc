@@ -17,6 +17,7 @@ using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Point_3 = Kernel::Point_3;
 using Surface_mesh = CGAL::Surface_mesh<Point_3>;
 
+/* Converts <std::array<double, 3> vertices to Point_3 CGAL points. */
 std::vector<Point_3> ToPoint3s(
   const std::vector<std::array<double, 3>>& points
 ) {
@@ -28,6 +29,7 @@ std::vector<Point_3> ToPoint3s(
   return output_points;
 }
 
+/* Converts mesh::Face indices to std::vector<std::size_t> indices. */
 std::vector<std::vector<std::size_t>> ToBareFaces(
   const std::vector<mesh::Face>& faces
 ) {
@@ -39,6 +41,7 @@ std::vector<std::vector<std::size_t>> ToBareFaces(
   return output_faces;
 }
 
+/* Executes the shrink wrap logic on the mesh::Mesh `mesh`. */
 mesh::Mesh Run(
   const mesh::Mesh& mesh, const double& alpha, const double& offset
 ) {
@@ -64,6 +67,8 @@ mesh::Mesh Run(
     }
     wrap_faces.push_back(output_face_vertices);
   }
+  // `closest_faces` is an ordered vector mapping each wrap's face to its
+  // closest face in the source mesh.
   std::vector<mesh::Face> closest_faces = mesh::Face::ClosestFaces(
     mesh.GetFaces(), wrap_faces, mesh.GetVertices()
   );
@@ -71,6 +76,8 @@ mesh::Mesh Run(
   output_faces.reserve(wrap_faces.size());
   for (std::size_t i; i < wrap_faces.size(); ++i) {
     mesh::Face wrap_face = wrap_faces[i];
+    // Functionally transform the closest face to the output face based on its
+    // optional material attribute.
     mesh::Face output_face = closest_faces[i]
       .GetMaterial()
       .transform([wrap_face](int material) {

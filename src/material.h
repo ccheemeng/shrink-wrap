@@ -14,11 +14,25 @@ struct Dissolve {
 };
 }  // namespace internal
 
+/* Wraps specifications for mesh materials.
+
+The class is structured around the MTL format, and image maps are not supported.
+
+May be subsumed under a broader Material class and renamed to MaterialObj if
+more material formats are supported.
+
+Example:
+  Material::FromString("newmtl my_mtl\nKa 0.0435 0.0435 0.0435");
+*/
 class Material {
   public:
-    static Material FromString(const std::string& description);
+    /* Returns a Material from a material definition. */
+    static Material FromString(const std::string& definition);
+
+    /* Returns a material definition of `this`. */
     std::string ToString() const;
 
+    /* Returns the material name of `this`. */
     std::string GetName() const;
 
   private:

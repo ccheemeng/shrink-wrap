@@ -9,16 +9,16 @@
 
 namespace shrink_wrap {
 namespace mesh {
-Material Material::FromString(const std::string& description) {
+Material Material::FromString(const std::string& definition) {
   Material material;
 
-  std::string new_description = description;
-  new_description.erase(
-    std::remove(new_description.begin(), new_description.end(), '\r'),
-    new_description.end()
+  std::string new_definition = definition;
+  new_definition.erase(
+    std::remove(new_definition.begin(), new_definition.end(), '\r'),
+    new_definition.end()
   );
 
-  std::vector<std::string> statements = utils::Split(new_description, '\n');
+  std::vector<std::string> statements = utils::Split(new_definition, '\n');
   for (const std::string& statement : statements) {
     std::vector<std::string> parts = utils::Split(statement, ' ');
 

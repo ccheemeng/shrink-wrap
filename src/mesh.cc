@@ -10,6 +10,12 @@
 
 namespace shrink_wrap {
 namespace mesh {
+Mesh::Mesh() : Mesh(
+  std::vector<std::array<double, 3>>(),
+  std::vector<Face>(),
+  std::vector<Material>()
+) {}
+
 Mesh::Mesh(
   std::vector<std::array<double, 3>> vertices, std::vector<Face> faces
 ) {
@@ -23,6 +29,7 @@ Mesh::Mesh(
     if (!(face.Valid())) {
       continue;
     }
+    // Only add faces that correctly reference vertices.
     std::optional<std::pair<std::size_t, std::size_t>> vertex_minmax = face
       .GetVertexMinmax();
     std::optional<bool> valid_vertices = vertex_minmax.transform(
@@ -71,13 +78,9 @@ Mesh Mesh::SetVerticesFaces(
 std::string Mesh::ToString() const {
   return "Mesh(v"
     + std::to_string(this->GetVertices().size())
-    + ", f" + std::to_string(this->GetFaces().size()) 
+    + ", f" + std::to_string(this->GetFaces().size())
     + ", mtl" + std::to_string(this->GetMaterials().size())
     + ")";
-}
-
-bool Mesh::Valid() const {
-  return this->GetVertices().empty();
 }
 
 Mesh Mesh::Triangulate() const {

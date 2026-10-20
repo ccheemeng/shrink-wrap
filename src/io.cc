@@ -17,7 +17,8 @@
 namespace shrink_wrap {
 namespace io {
 namespace {
-std::vector<std::string> ReadMtl(std::filesystem::path mtl_file) {
+/* Returns all material definitions in `mtl_file`. */
+std::vector<std::string> ReadMtl(const std::filesystem::path& mtl_file) {
   std::vector<std::string> materials;
   if (
     !std::filesystem::is_regular_file(mtl_file)
@@ -33,9 +34,11 @@ std::vector<std::string> ReadMtl(std::filesystem::path mtl_file) {
     line.erase(std::remove(line.begin(), line.end(), '\n'), line.end());
     line.erase(std::remove(line.begin(), line.end(), '\r'), line.end());
     std::vector<std::string> parts = utils::Split(line, ' ');
+
     if (parts.empty()) {
       continue;
     }
+
     if (parts[0] == "newmtl") {
       if (!(material.empty())) {
         if (material.back() == '\n') {
@@ -49,7 +52,7 @@ std::vector<std::string> ReadMtl(std::filesystem::path mtl_file) {
         continue;
       }
     }
-    material += line + '\n';
+    material += line + "\n";
   }
   file_stream.close();
   if (!material.empty()) {
@@ -61,19 +64,27 @@ std::vector<std::string> ReadMtl(std::filesystem::path mtl_file) {
   return materials;
 }
 
+/* Returns an OBJ format string of all faces with a particular material.
+
+Args:
+  material_face_map: Map of faces keyed on material name.
+  material_name: Material name to get faces from `material_face_map` with.
+*/
 std::string WriteMaterialFaces(
-  std::unordered_map<std::string, std::vector<std::vector<size_t>>> material_face_map,
-  std::string material_name
+  std::unordered_map<
+    std::string, std::vector<std::vector<size_t>>
+  > material_face_map,
+  const std::string& material_name
 ) {
   std::string lines = "";
   std::vector<std::vector<size_t>> faces = material_face_map[material_name];
   for (std::vector<size_t> face : faces) {
     std::string line = "f ";
     for (size_t i : face) {
-      line += std::to_string(i + 1) + ' ';
+      line += std::to_string(i + 1) + " ";
     }
     line.pop_back();
-    lines += line + '\n';
+    lines += line + "\n";
   }
   lines.pop_back();
   return lines;
@@ -139,14 +150,15 @@ mesh::Mesh IoObj::ReadDirectory(const std::string& directory) {
   }
 
   int material_index = 0;
+  // Index of material names to their positions in `materials`.
   std::unordered_map<std::string, int> material_names;
   std::vector<mesh::Material> materials;
-  for (std::string material_file : material_files) {
-    std::vector<std::string> material_descriptions = ReadMtl(material_file);
-    materials.reserve(materials.size() + material_descriptions.size());
-    for (std::string material_description : material_descriptions) {
+  for (const std::string& material_file : material_files) {
+    std::vector<std::string> material_definitions = ReadMtl(material_file);
+    materials.reserve(materials.size() + material_definitions.size());
+    for (const std::string& material_definition : material_definitions) {
       mesh::Material material
-        = mesh::Material::FromString(material_description);
+        = mesh::Material::FromString(material_definition);
       if (material_names.contains(material.GetName())) {
         continue;
       }
@@ -248,20 +260,23 @@ bool IoObj::Write(const mesh::Mesh& mesh, const std::string& target) {
   std::filesystem::create_directory(target_path.parent_path());
 
   std::ofstream obj_stream = std::ofstream(obj_path);
-  obj_stream << "mtllib " << mtl_path.filename().string() << '\n';
+  obj_stream << "mtllib " << mtl_path.filename().string() << "\n";
 
-  for (std::array<double, 3> vertex : mesh.GetVertices()) {
+  for (const std::array<double, 3>& vertex : mesh.GetVertices()) {
     obj_stream << "v "
       << std::to_string(vertex[0])
-      << ' ' << std::to_string(vertex[1])
-      << ' ' << std::to_string(vertex[2])
-      << '\n';
+      << " " << std::to_string(vertex[1])
+      << " " << std::to_string(vertex[2])
+      << "\n";
   }
 
   std::vector<mesh::Material> materials = mesh.GetMaterials();
-  std::unordered_map<std::string, std::vector<std::vector<size_t>>> material_face_map;
-  for (mesh::Face face : mesh.GetFaces()) {
-    std::string material_name = face.GetMaterial()
+  std::unordered_map<
+    std::string, std::vector<std::vector<size_t>>
+  > material_face_map;
+  for (const mesh::Face& face : mesh.GetFaces()) {
+    std::string material_name = face
+      .GetMaterial()
       .transform([materials](int material) {
         return materials[material].GetName();
       })
@@ -273,19 +288,19 @@ bool IoObj::Write(const mesh::Mesh& mesh, const std::string& target) {
   }
 
   if (material_face_map.contains("")) {  // put no material faces at top of file
-    obj_stream << WriteMaterialFaces(material_face_map, "") << '\n';
+    obj_stream << WriteMaterialFaces(material_face_map, "") << "\n";
     material_face_map.erase("");
   }
-  for (std::string material_name : std::views::keys(material_face_map)) {
-    obj_stream << "usemtl " << material_name << '\n';
-    obj_stream << WriteMaterialFaces(material_face_map, material_name) << '\n';
+  for (const std::string& material_name : std::views::keys(material_face_map)) {
+    obj_stream << "usemtl " << material_name << "\n";
+    obj_stream << WriteMaterialFaces(material_face_map, material_name) << "\n";
   }
 
   obj_stream.close();
 
   std::ofstream mtl_stream = std::ofstream(mtl_path);
-  for (mesh::Material material : mesh.GetMaterials()) {
-    mtl_stream << material.ToString() << '\n';
+  for (const mesh::Material& material : mesh.GetMaterials()) {
+    mtl_stream << material.ToString() << "\n";
   }
   mtl_stream.close();
 

@@ -80,6 +80,7 @@ std::vector<Face> Face::ClosestFaces(
     );
     AABB_tree::Point_and_primitive_id point_and_primitive_id
       = aabb_tree.closest_point_and_primitive(barycentre_point);
+    // point_and_primitive_id.second is an iterator over triangles.
     std::size_t i = std::distance(
       triangles.cbegin(), point_and_primitive_id.second
     );
@@ -153,21 +154,18 @@ int Face::NumVertices() const {
 std::array<double, 3> Face::Barycentre(
   const std::vector<std::array<double, 3>>& vertices
 ) const {
-  std::vector<std::pair<Point_3, Kernel::FT>> weighted_points;
-  weighted_points.reserve(this->NumVertices());
+  double x_total = 0.0;
+  double y_total = 0.0;
+  double z_total = 0.0;
   for (const std::size_t& i : this->GetVertices()) {
-    weighted_points.push_back(
-      std::pair<Point_3, Kernel::FT>(
-        Point_3(vertices[i][0], vertices[i][1], vertices[i][2]), Kernel::FT(1)
-      )
-    );
+    x_total += vertices[i][0];
+    y_total += vertices[i][1];
+    z_total += vertices[i][2];
   }
-  Point_3 barycentre = CGAL::barycenter(
-    weighted_points.cbegin(), weighted_points.cend()
-  );
-  return std::array<double, 3>(
-    {barycentre.x(), barycentre.y(), barycentre.z()}
-  );
+  double x = x_total / this->NumVertices();
+  double y = y_total / this->NumVertices();
+  double z = z_total / this->NumVertices();
+  return std::array<double, 3>({x, y, z});
 }
 
 std::vector<Face> Face::Triangulate(
@@ -191,6 +189,9 @@ std::vector<Face> Face::Triangulate(
   }
   Delaunay delaunay = Delaunay(face_points.cbegin(), face_points.cend());
   std::vector<Face> faces;
+  // Maximum number of Faces is n * (n - 3) beyond n = 3, where n is the number
+  // of vertices.
+  faces.reserve(this->NumVertices() * (this->NumVertices() - 3));
   for (const Delaunay::Facet& facet : delaunay.finite_facets()) {
     std::vector<std::size_t> triangle;
     triangle.reserve(3);
