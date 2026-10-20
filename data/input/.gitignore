@@ -1,0 +1,5 @@
+*.mtl
+*.obj
+!KPF\ Robinson\ Tower/*
+!mit_teapot/*
+!Tembusu\ L12/*

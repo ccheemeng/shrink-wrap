@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12...3.29)
-project(ShrinkWrap)
+project(shrink_wrap LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_BUILD_TYPE Release)
@@ -10,8 +10,16 @@ set(BUILD_SHARED_LIBS OFF)
 find_package(CGAL REQUIRED)
 find_package(Eigen3 REQUIRED NO_MODULE)
 
-add_executable(shrink_wrap source/shrink_wrap.cpp)
+file(
+  GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cc"
+)
+add_executable(shrink_wrap ${SOURCES})
 target_link_libraries(shrink_wrap CGAL::CGAL)
 target_link_libraries(shrink_wrap Eigen3::Eigen)
 
-target_include_directories(shrink_wrap PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(
+  shrink_wrap
+  PRIVATE
+  "${CMAKE_CURRENT_SOURCE_DIR}/include"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src"
+)
