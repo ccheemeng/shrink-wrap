@@ -8,7 +8,7 @@ int main(int argc, char **argv) {
   double alpha = std::stod(argv[3]);
   double offset = std::stod(argv[4]);
 
-  shrink_wrap::ShrinkWrapper::ShrinkWrap(input, output, alpha, offset);
+  shrink_wrap::ShrinkWrap(input, output, alpha, offset);
 
   return 0;
 }

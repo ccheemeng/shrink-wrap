@@ -1,5 +1,6 @@
 #include "shrink_wrap/shrink_wrap.h"
 
+#include <string>
 #include <vector>
 
 #include "CGAL/alpha_wrap_3.h"
@@ -100,7 +101,7 @@ mesh::Mesh Run(
 }
 }  // namespace
 
-bool ShrinkWrapper::ShrinkWrap(
+bool ShrinkWrap(
   const std::string& input,
   const std::string& output,
   const double& alpha,
