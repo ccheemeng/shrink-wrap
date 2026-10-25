@@ -1,0 +1,5 @@
+[project]
+name = "shrink-wrap"
+
+[build-system]
+build-backend = "uv_build"
