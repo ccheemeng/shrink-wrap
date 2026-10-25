@@ -41,12 +41,12 @@ target_link_libraries(shrink_wrap
 )
 
 find_package(pybind11 REQUIRED)
-pybind11_add_module(shrink_wrap_python)
-target_sources(shrink_wrap_python
+pybind11_add_module(pyshrinkwrap)
+target_sources(pyshrinkwrap
   PRIVATE
-    python/shrink_wrap_python.cc
+    python/pyshrinkwrap.cc
 )
-target_link_libraries(shrink_wrap_python
+target_link_libraries(pyshrinkwrap
   PRIVATE
     shrink_wrap_core
 )

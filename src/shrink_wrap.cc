@@ -1,5 +1,6 @@
 #include "shrink_wrap/shrink_wrap.h"
 
+#include <string>
 #include <vector>
 
 #include "CGAL/alpha_wrap_3.h"
