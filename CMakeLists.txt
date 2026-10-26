@@ -6,7 +6,7 @@ set(CMAKE_BUILD_TYPE Release)
 
 find_package(CGAL REQUIRED)
 find_package(Eigen3 REQUIRED NO_MODULE)
-add_library(shrink_wrap_core)
+add_library(shrink_wrap_core STATIC)
 target_sources(shrink_wrap_core
   PRIVATE
     src/face.cc
@@ -38,4 +38,11 @@ target_sources(shrink_wrap
 target_link_libraries(shrink_wrap
   PRIVATE
     shrink_wrap_core
+)
+
+install(
+  TARGETS
+    shrink_wrap
+  DESTINATION
+    bin
 )

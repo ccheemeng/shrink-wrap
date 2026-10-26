@@ -39,12 +39,11 @@ def shrink_wrap(
     try:
         subprocess.run(
             [str(binary_path), input_dir, output_name, str(alpha), str(offset)],
-            capture_output=True,
             timeout=timeout,
             check=True,
             text=True,
-            stdout=stdout,
-            stderr=stderr,
+            stdout=stdout if stdout else subprocess.PIPE,
+            stderr=stderr if stderr else subprocess.PIPE,
         )
     except subprocess.CalledProcessError as e:
         raise RuntimeError(f"Return code {e.returncode}: {e.stderr}") from e
