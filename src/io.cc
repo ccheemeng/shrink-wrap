@@ -3,11 +3,13 @@
 #include <filesystem>
 #include <fstream>
 #include <numeric>
+#include <optional>
 #include <ranges>
 #include <set>
 #include <string>
 #include <tuple>
 #include <unordered_map>
+#include <vector>
 
 #include "face.h"
 #include "material.h"
@@ -31,8 +33,8 @@ std::vector<std::string> ReadMtl(const std::filesystem::path& mtl_file) {
   std::string material = "";
   std::string line;
   while (std::getline(file_stream, line)) {
-    line.erase(std::remove(line.begin(), line.end(), '\n'), line.end());
-    line.erase(std::remove(line.begin(), line.end(), '\r'), line.end());
+    std::erase(line, '\n');
+    std::erase(line, '\r');
     std::vector<std::string> parts = utils::Split(line, ' ');
 
     if (parts.empty()) {
@@ -116,8 +118,8 @@ mesh::Mesh IoObj::ReadDirectory(const std::string& directory) {
     std::ifstream file_stream = std::ifstream(entry.path());
     std::string line;
     while (std::getline(file_stream, line)) {
-      line.erase(std::remove(line.begin(), line.end(), '\n'), line.end());
-      line.erase(std::remove(line.begin(), line.end(), '\r'), line.end());
+      std::erase(line, '\n');
+      std::erase(line, '\r');
       std::vector<std::string> parts = utils::Split(line, ' ');
 
       if (parts.empty()) {
@@ -185,8 +187,8 @@ mesh::Mesh IoObj::ReadDirectory(const std::string& directory) {
     std::ifstream file_stream = std::ifstream(entry.path());
     std::string line;
     while (std::getline(file_stream, line)) {
-      line.erase(std::remove(line.begin(), line.end(), '\n'), line.end());
-      line.erase(std::remove(line.begin(), line.end(), '\r'), line.end());
+      std::erase(line, '\n');
+      std::erase(line, '\r');
       std::vector<std::string> parts = utils::Split(line, ' ');
 
       if (parts.empty()) {
@@ -199,12 +201,9 @@ mesh::Mesh IoObj::ReadDirectory(const std::string& directory) {
         }
         std::optional<std::array<double, 3>> vertex_optional
           = utils::StringsToArrayDouble3(parts[1], parts[2], parts[3]);
-        vertex_optional.transform(
-          [&vertices](const std::array<double, 3>& vertex) {
-            vertices.push_back(vertex);
-            return vertex;
-          }
-        );
+        if (vertex_optional.has_value()) {
+          vertices.push_back(vertex_optional.value());
+        }
       } else if (parts[0] == "f") {
         if (parts.size() < 4) {
           continue;
@@ -275,12 +274,21 @@ bool IoObj::Write(const mesh::Mesh& mesh, const std::string& target) {
     std::string, std::vector<std::vector<size_t>>
   > material_face_map;
   for (const mesh::Face& face : mesh.GetFaces()) {
-    std::string material_name = face
-      .GetMaterial()
-      .transform([materials](int material) {
-        return materials[material].GetName();
-      })
-      .value_or("");
+    //
+    std::string material_name = "";
+    std::optional<int> material = face.GetMaterial();
+    if (material.has_value()) {
+      material_name = materials[material.value()].GetName();
+    }
+    //
+    // TODO: Switch to below code when upgrading to C++23.
+    // std::string material_name = face
+    //   .GetMaterial()
+    //   .transform([materials](int material) {
+    //     return materials[material].GetName();
+    //   })
+    //   .value_or("");
+
     if (!material_face_map.contains(material_name)) {
       material_face_map[material_name] = std::vector<std::vector<size_t>>();
     }

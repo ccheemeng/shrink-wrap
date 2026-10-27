@@ -32,17 +32,33 @@ Mesh::Mesh(
     // Only add faces that correctly reference vertices.
     std::optional<std::pair<std::size_t, std::size_t>> vertex_minmax = face
       .GetVertexMinmax();
-    std::optional<bool> valid_vertices = vertex_minmax.transform(
-      [vertices](std::pair<std::size_t, std::size_t> minmax) {
-        return minmax.first >= 0
-          && minmax.first < vertices.size()
-          && minmax.second >= 0
-          && minmax.second < vertices.size();
-      }
-    );
-    if (!(valid_vertices.value_or(true))) {
+
+    //
+    if (!vertex_minmax.has_value()) {
       continue;
     }
+    std::pair<std::size_t, std::size_t> minmax = vertex_minmax.value();
+    bool valid_vertices = minmax.first >= 0
+      && minmax.first < vertices.size()
+      && minmax.second >= 0
+      && minmax.second < vertices.size();
+    if (!valid_vertices) {
+      continue;
+    }
+    //
+    // TODO: Switch to below code when upgrading to C++23.
+    // std::optional<bool> valid_vertices = vertex_minmax.transform(
+    //   [vertices](std::pair<std::size_t, std::size_t> minmax) {
+    //     return minmax.first >= 0
+    //       && minmax.first < vertices.size()
+    //       && minmax.second >= 0
+    //       && minmax.second < vertices.size();
+    //   }
+    // );
+    // if (!(valid_vertices.value_or(true))) {
+    //   continue;
+    // }
+
     valid_faces.push_back(face);
   }
   this->faces_ = valid_faces;

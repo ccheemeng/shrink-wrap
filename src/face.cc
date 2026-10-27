@@ -127,9 +127,17 @@ std::optional<std::pair<std::size_t, std::size_t>> Face::GetVertexMinmax(
 }
 
 Face Face::SetVertices(const std::vector<std::size_t>& vertices) const {
-  return this->GetMaterial()
-    .transform([vertices](int material) { return Face(vertices, material); })
-    .value_or(Face(vertices));
+  //
+  std::optional<int> material = this->GetMaterial();
+  if (material.has_value()) {
+    return Face(vertices, material.value());
+  }
+  return Face(vertices);
+  //
+  // TODO: Switch to below code when upgrading to C++23.
+  // return this->GetMaterial()
+  //   .transform([vertices](int material) { return Face(vertices, material); })
+  //   .value_or(Face(vertices));
 }
 
 Face Face::SetMaterial(int material) const {
