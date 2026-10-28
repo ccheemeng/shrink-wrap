@@ -42,8 +42,8 @@ def shrink_wrap(
             timeout=timeout,
             check=True,
             text=True,
-            stdout=stdout if stdout else subprocess.PIPE,
-            stderr=stderr if stderr else subprocess.PIPE,
+            stdout=stdout if stdout else None,
+            stderr=stderr if stderr else None,
         )
     except subprocess.CalledProcessError as e:
         raise RuntimeError(f"Return code {e.returncode}: {e.stderr}") from e
