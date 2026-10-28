@@ -46,11 +46,16 @@ std::vector<std::vector<std::size_t>> ToBareFaces(
 mesh::Mesh Run(
   const mesh::Mesh& mesh, const double& alpha, const double& offset
 ) {
+  std::cout << "Triangulating " << mesh.ToString() << "..." << std::endl;
   mesh::Mesh triangle_mesh = mesh.Triangulate();
 
-  std::vector<Point_3> points = ToPoint3s(mesh.GetVertices());
-  std::vector<std::vector<std::size_t>> faces = ToBareFaces(mesh.GetFaces());
+  std::vector<Point_3> points = ToPoint3s(triangle_mesh.GetVertices());
+  std::vector<std::vector<std::size_t>> faces = ToBareFaces(
+    triangle_mesh.GetFaces()
+  );
 
+  std::cout << "Shrink wrapping " << triangle_mesh.ToString() << "..."
+    << std::endl;
   Surface_mesh wrap;
   CGAL::alpha_wrap_3(points, faces, alpha, offset, wrap);
 
@@ -61,6 +66,7 @@ mesh::Mesh Run(
     output_vertices.push_back({point.x(), point.y(), point.z()});
   }
 
+  std::cout << "Mapping materials..." << std::endl;
   std::vector<mesh::Face> wrap_faces;
   wrap_faces.reserve(wrap.number_of_faces());
   for (Surface_mesh::Face_index face : wrap.faces()) {
@@ -120,8 +126,11 @@ bool ShrinkWrap(
   if (!io::IoObj::IsWritable(output)) {
     return false;
   }
+  std::cout << "Reading " << input << "..." << std::endl;
   mesh::Mesh input_mesh = io::IoObj::ReadDirectory(input);
+  std::cout << "Running..." << std::endl;
   mesh::Mesh output_mesh = Run(input_mesh, alpha, offset);
+  std::cout << "Writing to " << output << "..." << std::endl;
   return io::IoObj::Write(output_mesh, output);
 }
 }  // namespace shrink_wrap
