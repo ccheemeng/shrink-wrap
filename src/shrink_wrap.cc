@@ -84,14 +84,24 @@ mesh::Mesh Run(
   output_faces.reserve(wrap_faces.size());
   for (std::size_t i = 0; i < wrap_faces.size(); ++i) {
     mesh::Face wrap_face = wrap_faces[i];
-    // Functionally transform the closest face to the output face based on its
-    // optional material attribute.
-    mesh::Face output_face = closest_faces[i]
-      .GetMaterial()
-      .transform([wrap_face](int material) {
-        return wrap_face.SetMaterial(material);
-      })
-      .value_or(wrap_face);
+
+    //
+    mesh::Face output_face = wrap_face;
+    std::optional<int> material = closest_faces[i].GetMaterial();
+    if (material.has_value()) {
+      output_face = wrap_face.SetMaterial(material.value());
+    }
+    //
+    // TODO: Switch to below code when upgrading to C++23.
+    // // Functionally transform the closest face to the output face based on its
+    // // optional material attribute.
+    // mesh::Face output_face = closest_faces[i]
+    //   .GetMaterial()
+    //   .transform([wrap_face](int material) {
+    //     return wrap_face.SetMaterial(material);
+    //   })
+    //   .value_or(wrap_face);
+
     output_faces.push_back(output_face);
   }
 

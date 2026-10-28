@@ -1,12 +1,15 @@
-cmake_minimum_required(VERSION 3.12...3.31)
+cmake_minimum_required(VERSION 3.22)
 project(shrink_wrap LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# Compiling with GNU extensions causes errorneous Boost __float128 handling
+set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_BUILD_TYPE Release)
 
 find_package(CGAL REQUIRED)
 find_package(Eigen3 REQUIRED NO_MODULE)
-add_library(shrink_wrap_core)
+add_library(shrink_wrap_core STATIC)
 target_sources(shrink_wrap_core
   PRIVATE
     src/face.cc
@@ -40,13 +43,9 @@ target_link_libraries(shrink_wrap
     shrink_wrap_core
 )
 
-find_package(pybind11 REQUIRED)
-pybind11_add_module(pyshrinkwrap)
-target_sources(pyshrinkwrap
-  PRIVATE
-    python/pyshrinkwrap.cc
-)
-target_link_libraries(pyshrinkwrap
-  PRIVATE
-    shrink_wrap_core
+install(
+  TARGETS
+    shrink_wrap
+  DESTINATION
+    bin
 )
