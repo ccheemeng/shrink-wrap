@@ -14,7 +14,7 @@ A shrink wrap from multiple inputs:
 | - | - | - |
 | ![KPF Robinson Tower Structure](./img/KPF%20Robinson%20Tower/KPF%20Robinson%20Tower%20Structure.png) | ![KPF Robinson Tower Facade](./img/KPF%20Robinson%20Tower/KPF%20Robinson%20Tower%20Facade.png) | ![KPF Robinson Tower wrap](./img/KPF%20Robinson%20Tower/KPF%20Robinson%20Tower%20wrap.png) |
 
-## Installation
+## CLI Executable
 
 ### Build from source
 
@@ -33,15 +33,15 @@ A shrink wrap from multiple inputs:
     cmake --build ./build
     ```
 
-### Run the program
+### Run
 
 ```bash
-./build/shrink_wrap data/input/Tembusu\ L12/ 500.0 1.0
+./build/shrink_wrap data/input/Tembusu\ L12/ data/output/Tembusu\ L12 500.0 1.0
 
 ./build/shrink_wrap data/input/KPF\ Robinson\ Tower data/output/KPF\ Robinson\ Tower 0.5 0.001
 ```
 
-## Arguments
+#### Arguments
 
 | Name | Type | Description |
 |-|-|-|
@@ -49,3 +49,43 @@ A shrink wrap from multiple inputs:
 | `out` | `std::string` | Target name of the OBJ and MTL shrink wrap files |
 | `alpha` | `double` | Alpha parameter (see [CGAL 3D Alpha Wrapping](https://doc.cgal.org/latest/Alpha_wrap_3/index.html)), must be greater than 0.0 |
 | `offset` | `double` | Offset parameter (see [CGAL 3D Alpha Wrapping](https://doc.cgal.org/latest/Alpha_wrap_3/index.html)), must be greater than 0.0 |
+
+## Python
+
+### Install from releases
+
+Install the latest wheel from this repo's releases:
+
+```bash
+pip install <wheel-file>
+```
+
+### Build from source
+
+1. Build a Python wheel with Docker:
+
+    ```bash
+    docker build --output=. .
+    ```
+
+1. Install the package from the built wheel:
+
+    ```bash
+    pip install <wheel-file>
+    ```
+
+### Usage
+
+```python
+import shrink_wrap
+
+shrink_wrap.shrink_wrap(
+    "data/input/Tembusu L12/", "data/output/Tembusu L12", 500.0, 1.0
+)
+shrink_wrap.shrink_wrap(
+    "data/input/KPF Robinson Tower",
+    "data/output/KPF Robinson Tower",
+    0.5,
+    0.001,
+)
+```
