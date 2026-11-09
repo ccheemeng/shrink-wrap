@@ -2,6 +2,8 @@ import pathlib
 import subprocess
 from typing import TextIO
 
+BINARY_PATH = "bin/shrink_wrap"
+
 
 def shrink_wrap(
     input_dir: str,
@@ -33,7 +35,7 @@ def shrink_wrap(
         RuntimeError: The process exited with a non-zero return code.
         TimeoutError: A `timeout` was specified and the process timed out.
     """
-    binary_path = pathlib.Path(__file__).parent.joinpath("bin", "shrink_wrap")
+    binary_path = pathlib.Path(__file__).parent.joinpath(BINARY_PATH)
     if not binary_path.is_file():
         raise FileNotFoundError(f"Required binary at {binary_path} not found")
     try:
