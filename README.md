@@ -50,6 +50,42 @@ A shrink wrap from multiple inputs:
 | `alpha` | `double` | Alpha parameter (see [CGAL 3D Alpha Wrapping](https://doc.cgal.org/latest/Alpha_wrap_3/index.html)), must be greater than 0.0 |
 | `offset` | `double` | Offset parameter (see [CGAL 3D Alpha Wrapping](https://doc.cgal.org/latest/Alpha_wrap_3/index.html)), must be greater than 0.0 |
 
+## Java
+
+### Install from releases
+
+Install the latest JAR file from this repo's releases.
+
+### Build from source
+
+1. Build a JAR file with Docker:
+
+    ```bash
+    docker build . -f java/Dockerfile --output=.
+    ```
+
+1. Install the package from the JAR file.
+
+### Usage
+
+```java
+import io.github.ccheemeng.shrink_wrap.ShrinkWrap;
+
+public class Main {
+    public static void main(String[] args) {
+        ShrinkWrap.shrinkWrap(
+            "data/input/Tembusu L12", "data/output/Tembusu L12", 500.0, 1.0
+        );
+        ShrinkWrap.shrinkWrap(
+            "data/input/KPF Robinson Tower",
+            "data/output/KPF Robinson Tower",
+            0.5,
+            0.001,
+        );
+    }
+}
+```
+
 ## Python
 
 ### Install from releases
@@ -65,7 +101,7 @@ pip install <wheel-file>
 1. Build a Python wheel with Docker:
 
     ```bash
-    docker build --output=. .
+    docker build . -f python/Dockerfile --output=.
     ```
 
 1. Install the package from the built wheel:
@@ -80,7 +116,7 @@ pip install <wheel-file>
 import shrink_wrap
 
 shrink_wrap.shrink_wrap(
-    "data/input/Tembusu L12/", "data/output/Tembusu L12", 500.0, 1.0
+    "data/input/Tembusu L12", "data/output/Tembusu L12", 500.0, 1.0
 )
 shrink_wrap.shrink_wrap(
     "data/input/KPF Robinson Tower",
